@@ -4,13 +4,14 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  setupFilesAfterSetup: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
     '!src/**/*.d.ts',
     '!src/app/**/*.{ts,tsx}',
   ],
+  injectGlobals: true,
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
       useESM: false,
@@ -21,4 +22,7 @@ module.exports = {
       },
     }],
   },
+  transformIgnorePatterns: [
+    '/node_modules/(?!(framer-motion|@radix-ui|lucide-react)/)',
+  ],
 };
