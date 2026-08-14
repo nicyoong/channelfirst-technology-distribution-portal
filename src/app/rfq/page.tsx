@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FileText, Send, Truck, ShieldCheck } from "lucide-react";
+import { FileText, Send, Truck, ShieldCheck, CheckCircle2, X } from "lucide-react";
 import { Button, Card, Input, Textarea, Badge } from "@/components/ui";
+import { products } from "@/data/products";
 
 export const metadata: Metadata = {
   title: "Request a Quote — ChannelFirst Technology",
@@ -10,6 +11,9 @@ export const metadata: Metadata = {
 };
 
 export default function RFQPage() {
+  const refNumber = `RFQ-CFT-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, "0")}`;
+  const totalItems = products.length;
+
   return (
     <div className="bg-background">
       {/* Hero */}
@@ -116,6 +120,21 @@ export default function RFQPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Quote summary */}
+            <Card className="p-6 bg-primary text-white">
+              <h3 className="text-base font-semibold mb-2">Quick Quote</h3>
+              <p className="text-sm text-blue-100 mb-4">
+                Browse {products.length} products in our catalogue and add items
+                to your RFQ list.
+              </p>
+              <Link href="/catalogue">
+                <Button size="sm" variant="outline" className="w-full border-white/30 text-white hover:bg-white/10">
+                  Browse Catalogue
+                </Button>
+              </Link>
+            </Card>
+
+            {/* What happens next */}
             <Card className="p-6">
               <h3 className="text-base font-semibold text-foreground mb-4">
                 What Happens Next?
@@ -155,13 +174,14 @@ export default function RFQPage() {
               </div>
             </Card>
 
-            <Card className="p-6 bg-primary text-white">
+            {/* Urgent contact */}
+            <Card className="p-6 bg-navy text-white">
               <h3 className="text-base font-semibold mb-2">Need Urgent Assistance?</h3>
-              <p className="text-sm text-blue-100 mb-4">
+              <p className="text-sm text-slate-400 mb-4">
                 Call our sales team directly for immediate assistance.
               </p>
               <p className="text-xl font-bold">03-2780 8888</p>
-              <p className="text-sm text-blue-200 mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Mon–Fri, 9am–6pm (GMT+8)
               </p>
               <Link href="/contact" className="mt-4 block">
@@ -175,6 +195,7 @@ export default function RFQPage() {
               </Link>
             </Card>
 
+            {/* Reseller benefits */}
             <Card className="p-6">
               <h3 className="text-base font-semibold text-foreground mb-3">
                 Reseller Benefits

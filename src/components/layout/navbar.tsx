@@ -19,55 +19,49 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 
 const productCategories = [
   {
     id: "networking",
     label: "Networking",
     icon: Network,
-    description: "Switches, routers, access points, and network infrastructure",
-    href: "/products/networking",
+    description: "Switches, routers, APs, and network infrastructure",
+    href: "/catalogue?category=networking",
   },
   {
     id: "servers-storage",
     label: "Servers & Storage",
     icon: Server,
     description: "Enterprise servers, NAS, SAN, and storage solutions",
-    href: "/products/servers-storage",
+    href: "/catalogue?category=servers-storage",
   },
   {
     id: "endpoints",
     label: "Endpoints & Mobility",
     icon: Monitor,
     description: "Laptops, desktops, workstations, and mobile devices",
-    href: "/products/endpoints",
+    href: "/catalogue?category=endpoints",
   },
   {
     id: "cybersecurity",
     label: "Cybersecurity",
     icon: Shield,
     description: "Firewalls, endpoint protection, and security software",
-    href: "/products/cybersecurity",
+    href: "/catalogue?category=cybersecurity",
   },
   {
     id: "software",
     label: "Software & Licensing",
     icon: Package,
     description: "Microsoft, Adobe, and enterprise software licenses",
-    href: "/products/software",
+    href: "/catalogue?category=software",
   },
   {
     id: "accessories",
     label: "Accessories & Peripherals",
     icon: Cable,
     description: "Cables, docking stations, peripherals, and consumables",
-    href: "/products/accessories",
+    href: "/catalogue?category=accessories",
   },
 ];
 
@@ -148,11 +142,12 @@ export function NavBar({ cartCount = 0, onSearch }: NavBarProps) {
                 onMouseLeave={handleProductsLeave}
               >
                 <Link
-                  href="/products"
+                  href="/catalogue"
                   className={cn(
                     "flex items-center gap-1 px-3 py-2 text-sm font-medium text-foreground rounded-md transition-colors hover:bg-accent hover:text-foreground",
-                    pathname?.startsWith("/products") &&
-                      "bg-accent text-foreground"
+                    pathname?.startsWith("/catalogue") || pathname?.startsWith("/product")
+                      ? "bg-accent text-foreground"
+                      : ""
                   )}
                 >
                   Products
@@ -189,7 +184,7 @@ export function NavBar({ cartCount = 0, onSearch }: NavBarProps) {
                     </div>
                     <div className="mt-4 pt-4 border-t border-border">
                       <Link
-                        href="/products"
+                        href="/catalogue"
                         className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                       >
                         View all products →
@@ -206,7 +201,9 @@ export function NavBar({ cartCount = 0, onSearch }: NavBarProps) {
                   className={cn(
                     "px-3 py-2 text-sm font-medium rounded-md transition-colors hover:bg-accent hover:text-foreground",
                     pathname === link.href && "bg-accent text-foreground",
-                    link.highlight && !pathname?.startsWith(link.href) && "text-amber-600"
+                    link.highlight &&
+                      !pathname?.startsWith(link.href) &&
+                      "text-amber-600"
                   )}
                 >
                   {link.label}
@@ -223,7 +220,8 @@ export function NavBar({ cartCount = 0, onSearch }: NavBarProps) {
             <div className="flex items-center gap-2">
               {/* Search */}
               <div className="hidden md:flex items-center relative">
-                <div
+                <form
+                  onSubmit={handleSearchSubmit}
                   className={cn(
                     "flex items-center rounded-md border border-input bg-background px-3 py-1.5 transition-all duration-200",
                     searchOpen
@@ -236,34 +234,40 @@ export function NavBar({ cartCount = 0, onSearch }: NavBarProps) {
                     type="text"
                     placeholder="Search products..."
                     className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                    value={searchQuery}
+                    onChange={(e) => handleSearch(e.target.value)}
                     onFocus={() => setSearchOpen(true)}
                     onBlur={() => setTimeout(() => setSearchOpen(false), 200)}
-                    onChange={(e) => handleSearch(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleSearchSubmit(e)}
                   />
-                </div>
+                </form>
               </div>
 
               {/* Reseller Login */}
               <Link href="/reseller/login">
-                <Button variant="outline" size="sm" className="hidden sm:flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden sm:flex gap-2"
+                >
                   <User className="h-4 w-4" />
                   Reseller Login
                 </Button>
               </Link>
 
               {/* RFQ Cart */}
-              <button
-                className="relative flex h-10 w-10 items-center justify-center rounded-md border border-input text-foreground transition-colors hover:bg-accent"
-                aria-label={`RFQ cart with ${cartCount} items`}
-              >
-                <FileText className="h-5 w-5" />
-                {cartCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
-                    {cartCount}
-                  </span>
-                )}
-              </button>
+              <Link href="/rfq">
+                <button
+                  className="relative flex h-10 w-10 items-center justify-center rounded-md border border-input text-foreground transition-colors hover:bg-accent"
+                  aria-label={`RFQ cart with ${cartCount} items`}
+                >
+                  <FileText className="h-5 w-5" />
+                  {cartCount > 0 && (
+                    <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
+                      {cartCount}
+                    </span>
+                  )}
+                </button>
+              </Link>
 
               {/* Mobile hamburger */}
               <button
@@ -309,7 +313,10 @@ export function NavBar({ cartCount = 0, onSearch }: NavBarProps) {
 
             <div className="overflow-y-auto px-4 py-4 space-y-1">
               {/* Mobile search */}
-              <form onSubmit={handleSearchSubmit} className="mb-4">
+              <form
+                onSubmit={handleSearchSubmit}
+                className="mb-4"
+              >
                 <div className="flex items-center rounded-md border border-input px-3 py-2">
                   <Search className="mr-2 h-4 w-4 text-muted-foreground" />
                   <input
@@ -339,7 +346,7 @@ export function NavBar({ cartCount = 0, onSearch }: NavBarProps) {
                   </Link>
                 ))}
                 <Link
-                  href="/products"
+                  href="/catalogue"
                   onClick={() => setMobileOpen(false)}
                   className="block px-2 py-2 text-sm text-primary hover:underline"
                 >
@@ -361,7 +368,9 @@ export function NavBar({ cartCount = 0, onSearch }: NavBarProps) {
                   className={cn(
                     "flex items-center gap-2 rounded-md px-2 py-2.5 text-sm font-medium transition-colors hover:bg-accent",
                     pathname === link.href && "bg-accent text-foreground",
-                    link.highlight && !pathname?.startsWith(link.href) && "text-amber-600"
+                    link.highlight &&
+                      !pathname?.startsWith(link.href) &&
+                      "text-amber-600"
                   )}
                 >
                   {link.label}
