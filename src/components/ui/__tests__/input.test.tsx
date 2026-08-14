@@ -1,6 +1,6 @@
 /** @jest-environment jsdom */
 import { describe, it, expect } from "@jest/globals";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { Input } from "@/components/ui/input";
 
 describe("Input", () => {
@@ -23,7 +23,7 @@ describe("Input", () => {
     const handleChange = jest.fn();
     render(<Input onChange={handleChange} />);
     const input = screen.getByRole("textbox");
-    input.dispatchEvent(new MouseEvent("change", { bubbles: true }));
+    fireEvent.change(input, { target: { value: "new value" } });
     expect(handleChange).toHaveBeenCalled();
   });
 

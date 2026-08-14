@@ -4,22 +4,19 @@ import { render, screen } from "@testing-library/react";
 import { SectionHeading } from "@/components/ui/section-heading";
 
 describe("SectionHeading", () => {
-  it("renders heading with level 2", () => {
-    render(<SectionHeading>Section Title</SectionHeading>);
+  it("renders heading text", () => {
+    render(<SectionHeading title="Section Title" />);
     expect(screen.getByText("Section Title")).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
-    render(<SectionHeading className="custom-heading">Title</SectionHeading>);
-    expect(screen.getByText("Title")).toHaveClass("custom-heading");
+    render(<SectionHeading title="Title" className="custom-heading" />);
+    const heading = document.querySelector(".custom-heading");
+    expect(heading).toBeInTheDocument();
   });
 
-  it("renders with icon", () => {
-    render(
-      <SectionHeading icon="shield">
-        Security
-      </SectionHeading>
-    );
-    expect(screen.getByText("Security")).toBeInTheDocument();
+  it("renders eyebrow text", () => {
+    render(<SectionHeading eyebrow="EP 01" title="Title" />);
+    expect(screen.getByText("EP 01")).toBeInTheDocument();
   });
 });

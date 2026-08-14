@@ -1,18 +1,22 @@
 module.exports = {
   testEnvironment: "jsdom",
-  setupFilesAfterSetup: ["<rootDir>/jest.setup.js"],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   transform: {
     "^.+\\.(ts|tsx|js|jsx)$": ["ts-jest", {
       useESM: false,
       tsconfig: {
         esModuleInterop: true,
         allowSyntheticDefaultImports: true,
+        jsx: "react-jsx",
+        target: "ES2017",
+        module: "commonjs",
+        moduleResolution: "node",
       },
     }],
   },
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
-    "^canvas$": "<rootDir>/__mocks__/canvas.js",
+    "^canvas$": "<rootDir>/mocks/canvas.js",
   },
   testMatch: [
     "**/__tests__/**/*.test.(ts|tsx)",
@@ -31,8 +35,5 @@ module.exports = {
   transformIgnorePatterns: [
     "node_modules/(?!(framer-motion|lucide-react|zod)/)",
   ],
-  // Ignore the global canvas module
-  modulePathIgnorePatterns: [
-    "C:/Users/Streaming/node_modules",
-  ],
+  modulePaths: ["<rootDir>/node_modules"],
 };

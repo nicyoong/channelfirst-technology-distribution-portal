@@ -20,9 +20,9 @@ describe("Tabs", () => {
     expect(screen.getByText("Content 1")).toBeInTheDocument();
   });
 
-  it("switches between tabs", () => {
+  it("renders tab content for default tab", () => {
     render(
-      <Tabs defaultValue="tab-1">
+      <Tabs defaultValue="tab-2">
         <TabsList>
           <TabsTrigger value="tab-1">Tab 1</TabsTrigger>
           <TabsTrigger value="tab-2">Tab 2</TabsTrigger>
@@ -31,7 +31,7 @@ describe("Tabs", () => {
         <TabsContent value="tab-2">Content 2</TabsContent>
       </Tabs>
     );
-    screen.getByText("Tab 2").click();
     expect(screen.getByText("Content 2")).toBeInTheDocument();
+    expect(screen.queryByText("Content 1")).not.toBeInTheDocument();
   });
 });

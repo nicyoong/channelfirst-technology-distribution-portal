@@ -6,21 +6,21 @@ import { Checkbox } from "@/components/ui/checkbox";
 describe("Checkbox", () => {
   it("renders checkbox", () => {
     render(<Checkbox id="test-checkbox" />);
-    expect(screen.getByLabelText(/test-checkbox/i)).toBeInTheDocument();
+    expect(screen.getByRole("checkbox")).toBeInTheDocument();
   });
 
   it("is unchecked by default", () => {
     render(<Checkbox id="test-checkbox" />);
-    expect(screen.getByLabelText(/test-checkbox/i)).not.toBeChecked();
+    expect(screen.getByRole("checkbox")).not.toBeChecked();
   });
 
   it("can be checked", () => {
     render(<Checkbox id="test-checkbox" defaultChecked />);
-    expect(screen.getByLabelText(/test-checkbox/i)).toBeChecked();
+    expect(screen.getByRole("checkbox")).toBeChecked();
   });
 
   it("applies custom className", () => {
     render(<Checkbox id="test-checkbox" className="custom-class" />);
-    expect(screen.getByLabelText(/test-checkbox/i)).toHaveClass("custom-class");
+    expect(screen.getByRole("checkbox")).toHaveClass("custom-class");
   });
 });

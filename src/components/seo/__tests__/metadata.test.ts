@@ -1,44 +1,34 @@
 /** @jest-environment jsdom */
 import { describe, it, expect } from "@jest/globals";
-import { generateMetadata } from "@/components/seo/metadata";
+import { metadata } from "@/components/seo/metadata";
 
-describe("generateMetadata", () => {
-  it("generates metadata with title", () => {
-    const metadata = generateMetadata({
-      title: "Test Page",
-    });
-    expect(metadata.title).toBe("Test Page");
+describe("metadata (default export)", () => {
+  it("has a default title", () => {
+    expect(metadata.title?.default).toContain("ChannelFirst Technology");
   });
 
-  it("generates metadata with description", () => {
-    const metadata = generateMetadata({
-      title: "Test",
-      description: "Test description",
-    });
-    expect(metadata.description).toBe("Test description");
+  it("has a title template", () => {
+    expect(metadata.title?.template).toBe("%s | ChannelFirst Technology");
   });
 
-  it("generates metadata with open graph", () => {
-    const metadata = generateMetadata({
-      title: "Test",
-      openGraph: {
-        title: "OG Title",
-        description: "OG Description",
-        images: [{ url: "https://example.com/image.jpg" }],
-      },
-    });
-    expect(metadata.openGraph?.title).toBe("OG Title");
-    expect(metadata.openGraph?.images).toHaveLength(1);
+  it("has a description", () => {
+    expect(typeof metadata.description).toBe("string");
+    expect(metadata.description.length).toBeGreaterThan(0);
   });
 
-  it("generates metadata with twitter", () => {
-    const metadata = generateMetadata({
-      title: "Test",
-      twitter: {
-        card: "summary_large_image",
-        title: "Twitter Title",
-      },
-    });
-    expect(metadata.twitter?.title).toBe("Twitter Title");
+  it("has OpenGraph config", () => {
+    expect(metadata.openGraph).toBeDefined();
+    expect(metadata.openGraph.type).toBe("website");
+    expect(metadata.openGraph.locale).toBe("en_MY");
+  });
+
+  it("has Twitter config", () => {
+    expect(metadata.twitter).toBeDefined();
+    expect(metadata.twitter.card).toBe("summary_large_image");
+  });
+
+  it("has robots config", () => {
+    expect(metadata.robots).toBeDefined();
+    expect(metadata.robots.index).toBe(true);
   });
 });

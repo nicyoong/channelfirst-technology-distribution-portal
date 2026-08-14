@@ -26,8 +26,9 @@ describe("Badge", () => {
 
   it("applies custom className", () => {
     render(<Badge className="custom-class">Custom Badge</Badge>);
-    const badge = screen.getByText("Custom Badge").parentElement;
-    expect(badge).toHaveClass("custom-class");
+    const badge = document.querySelector(".custom-class");
+    expect(badge).toBeInTheDocument();
+    expect(badge).toHaveClass("bg-primary");
   });
 
   it("renders with children as string", () => {

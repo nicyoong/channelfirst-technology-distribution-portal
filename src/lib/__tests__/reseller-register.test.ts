@@ -170,14 +170,13 @@ describe("resellerRegisterSchema", () => {
       expect(result.success).toBe(true);
     });
 
-    it("BUG: accepts whitespace-only company name (should reject)", () => {
-      // This is a bug! Whitespace-only should be rejected but min(2) passes it
+    it("rejects whitespace-only company name", () => {
+      // After fix: trim() is applied before min() check, so whitespace-only is rejected
       const result = resellerRegisterSchema.safeParse({
         ...validForm,
         companyName: "   ",
       });
-      // This test documents the bug - currently passes but shouldn't
-      expect(result.success).toBe(true); // BUG: should be false
+      expect(result.success).toBe(false);
     });
   });
 

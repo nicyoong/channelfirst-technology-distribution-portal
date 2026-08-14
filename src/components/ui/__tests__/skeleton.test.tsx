@@ -4,13 +4,16 @@ import { render, screen } from "@testing-library/react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 describe("Skeleton", () => {
-  it("renders skeleton", () => {
+  it("renders skeleton element", () => {
     render(<Skeleton />);
-    expect(screen.getByRole("status")).toBeInTheDocument();
+    // Skeleton renders a div with animation classes, no ARIA role
+    const skeleton = document.querySelector(".animate-pulse");
+    expect(skeleton).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
     render(<Skeleton className="custom-skeleton" />);
-    expect(screen.getByRole("status")).toHaveClass("custom-skeleton");
+    const skeleton = document.querySelector(".custom-skeleton");
+    expect(skeleton).toBeInTheDocument();
   });
 });
