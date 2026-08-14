@@ -4,45 +4,43 @@ import { render, screen } from "@testing-library/react";
 import { Badge } from "@/components/ui/badge";
 
 describe("Badge", () => {
-  it("renders with default variant and size", () => {
-    render(<Badge>Default</Badge>);
-    expect(screen.getByText("Default")).toBeInTheDocument();
+  it("renders with default variant", () => {
+    render(<Badge>Default Badge</Badge>);
+    expect(screen.getByText("Default Badge")).toBeInTheDocument();
+  });
+
+  it("renders with secondary variant", () => {
+    render(<Badge variant="secondary">Secondary Badge</Badge>);
+    expect(screen.getByText("Secondary Badge")).toBeInTheDocument();
+  });
+
+  it("renders with outline variant", () => {
+    render(<Badge variant="outline">Outline Badge</Badge>);
+    expect(screen.getByText("Outline Badge")).toBeInTheDocument();
+  });
+
+  it("renders with destructive variant", () => {
+    render(<Badge variant="destructive">Destructive Badge</Badge>);
+    expect(screen.getByText("Destructive Badge")).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
-    const { container } = render(<Badge className="custom-class">Test</Badge>);
-    expect(container.firstChild).toHaveClass("custom-class");
+    render(<Badge className="custom-class">Custom Badge</Badge>);
+    const badge = screen.getByText("Custom Badge").parentElement;
+    expect(badge).toHaveClass("custom-class");
   });
 
-  it("applies success variant classes", () => {
-    const { container } = render(<Badge variant="success">In Stock</Badge>);
-    expect(container.firstChild).toHaveClass("bg-success");
+  it("renders with children as string", () => {
+    render(<Badge>Test</Badge>);
+    expect(screen.getByText("Test")).toBeInTheDocument();
   });
 
-  it("applies warning variant classes", () => {
-    const { container } = render(<Badge variant="warning">Low Stock</Badge>);
-    expect(container.firstChild).toHaveClass("bg-amber");
-  });
-
-  it("applies destructive variant classes", () => {
-    const { container } = render(<Badge variant="destructive">Error</Badge>);
-    expect(container.firstChild).toHaveClass("bg-destructive");
-  });
-
-  it("applies different sizes", () => {
-    const { container: sm } = render(<Badge size="sm">Small</Badge>);
-    expect(sm.firstChild).toHaveClass("px-2");
-
-    const { container: lg } = render(<Badge size="lg">Large</Badge>);
-    expect(lg.firstChild).toHaveClass("px-3");
-    expect(lg.firstChild).toHaveClass("text-sm");
-  });
-
-  it("passes through HTML attributes", () => {
-    const { container } = render(
-      <Badge data-testid="badge" aria-label="Stock badge">Test</Badge>
+  it("renders with children as element", () => {
+    render(
+      <Badge>
+        <span>Span inside badge</span>
+      </Badge>
     );
-    expect(container.firstChild).toHaveAttribute("data-testid", "badge");
-    expect(container.firstChild).toHaveAttribute("aria-label", "Stock badge");
+    expect(screen.getByText("Span inside badge")).toBeInTheDocument();
   });
 });

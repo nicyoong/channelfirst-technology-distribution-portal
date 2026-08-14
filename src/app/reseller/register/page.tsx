@@ -252,7 +252,7 @@ export default function ResellerRegisterPage() {
                       <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         name="companyName"
-                        placeholder="e.g. Nexus Integrated Systems Sdn Bhd"
+                        placeholder="e.g. Nexus Integrated Systems Sdn Bhd (no leading/trailing spaces)"
                         value={form.companyName}
                         onChange={handleChange}
                         className={`pl-10 ${errors.companyName ? "border-destructive" : ""}`}

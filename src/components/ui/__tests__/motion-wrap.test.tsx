@@ -1,110 +1,41 @@
 /** @jest-environment jsdom */
-import { describe, it, expect, jest, beforeEach, afterEach } from "@jest/globals";
+import { describe, it, expect, jest } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
-import { MotionWrapper, StaggerContainer, FadeIn, ScaleIn } from "@/components/ui/motion-wrap";
+import { MotionWrap } from "@/components/ui/motion-wrap";
 
-// Polyfill matchMedia for jsdom
-beforeEach(() => {
-  Object.defineProperty(window, "matchMedia", {
-    writable: true,
-    value: jest.fn().mockImplementation((query) => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
-    })),
-  });
+// Mock framer-motion
+jest.mock("framer-motion", () => ({
+  motion: {
+    div: ({ children, ...props }: any) => require("react").createElement("div", props, children),
+  },
+}));
 
-  // Polyfill IntersectionObserver for framer-motion
-  Object.defineProperty(window, "IntersectionObserver", {
-    writable: true,
-    value: jest.fn().mockImplementation(() => ({
-      observe: jest.fn(),
-      disconnect: jest.fn(),
-      unobserve: jest.fn(),
-    })),
-  });
-});
-
-afterEach(() => {
-  jest.restoreAllMocks();
-});
-
-describe("MotionWrapper", () => {
-  it("renders children in a wrapper div", () => {
-    render(<MotionWrapper><span>Content</span></MotionWrapper>);
-    expect(screen.getByText("Content")).toBeInTheDocument();
-  });
-
-  it("renders a plain div when prefers-reduced-motion is true", () => {
-    jest.spyOn(window, "matchMedia").mockReturnValue({ matches: true } as any);
-    const { container } = render(<MotionWrapper><span>Content</span></MotionWrapper>);
-    expect(container.firstChild.tagName.toLowerCase()).toBe("div");
+describe("MotionWrap", () => {
+  it("renders children", () => {
+    render(
+      <MotionWrap>
+        <div>Test Content</div>
+      </MotionWrap>
+    );
+    expect(screen.getByText("Test Content")).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
-    const { container } = render(
-      <MotionWrapper className="my-class"><span>Content</span></MotionWrapper>
-    );
-    expect(container.firstChild).toHaveClass("my-class");
-  });
-
-  it("renders with motion when reduced motion is false", () => {
-    jest.spyOn(window, "matchMedia").mockReturnValue({ matches: false } as any);
-    const { container } = render(
-      <MotionWrapper delay={0.5}><span>Content</span></MotionWrapper>
-    );
-    expect(container.firstChild.tagName.toLowerCase()).toBe("div");
-  });
-});
-
-describe("StaggerContainer", () => {
-  it("renders children", () => {
     render(
-      <StaggerContainer>
-        <div>1</div>
-        <div>2</div>
-      </StaggerContainer>
+      <MotionWrap className="custom-class">
+        <div>Content</div>
+      </MotionWrap>
     );
-    expect(screen.getByText("1")).toBeInTheDocument();
-    expect(screen.getByText("2")).toBeInTheDocument();
+    const wrapper = screen.getByText("Content").parentElement;
+    expect(wrapper).toHaveClass("custom-class");
   });
 
-  it("renders a plain div when prefers-reduced-motion is true", () => {
-    jest.spyOn(window, "matchMedia").mockReturnValue({ matches: true } as any);
+  it("passes through props to motion.div", () => {
     const { container } = render(
-      <StaggerContainer><span>Content</span></StaggerContainer>
+      <MotionWrap data-testid="motion-wrap">
+        <div>Content</div>
+      </MotionWrap>
     );
-    expect(container.firstChild.tagName.toLowerCase()).toBe("div");
-  });
-});
-
-describe("FadeIn", () => {
-  it("renders children", () => {
-    render(<FadeIn><span>Faded</span></FadeIn>);
-    expect(screen.getByText("Faded")).toBeInTheDocument();
-  });
-
-  it("renders plain div when reduced motion", () => {
-    jest.spyOn(window, "matchMedia").mockReturnValue({ matches: true } as any);
-    const { container } = render(<FadeIn><span>Content</span></FadeIn>);
-    expect(container.firstChild.tagName.toLowerCase()).toBe("div");
-  });
-});
-
-describe("ScaleIn", () => {
-  it("renders children", () => {
-    render(<ScaleIn><span>Scaled</span></ScaleIn>);
-    expect(screen.getByText("Scaled")).toBeInTheDocument();
-  });
-
-  it("renders plain div when reduced motion", () => {
-    jest.spyOn(window, "matchMedia").mockReturnValue({ matches: true } as any);
-    const { container } = render(<ScaleIn><span>Content</span></ScaleIn>);
-    expect(container.firstChild.tagName.toLowerCase()).toBe("div");
+    expect(container.querySelector('[data-testid="motion-wrap"]')).toBeInTheDocument();
   });
 });

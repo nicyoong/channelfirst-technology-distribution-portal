@@ -1,3 +1,6 @@
+/**
+ * Validates the SSM number input and the reseller registration form schema.
+ */
 import { z } from "zod";
 
 export const FREE_EMAIL_DOMAINS = [
@@ -27,7 +30,7 @@ export const SSM_SCHEMA = z.string().refine(
 );
 
 export const resellerRegisterSchema = z.object({
-  companyName: z.string().min(2, "Company name is required"),
+  companyName: z.string().trim().min(2, "Company name is required"),
   ssmNumber: SSM_SCHEMA,
   businessType: z.enum(["Sdn Bhd", "Enterprise", "LLP", "System Integrator"]),
   contactName: z.string().min(2, "Contact person is required"),
