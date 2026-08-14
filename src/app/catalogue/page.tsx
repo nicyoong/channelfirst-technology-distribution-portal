@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, Suspense, useEffect } from "react";
+import { useState, useMemo, Suspense, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
@@ -14,11 +14,11 @@ import {
   Cable,
   CheckCircle2,
   X,
-  ChevronDown,
   Zap,
   HardDrive,
   Wifi,
-  Cpu as NetworkPort,
+  Cpu,
+  AlertCircle,
 } from "lucide-react";
 import {
   Badge,
@@ -30,6 +30,7 @@ import {
   Breadcrumbs,
   type BreadcrumbItem,
 } from "@/components/ui";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import type { Product } from "@/data/products";
 import { products, categories, vendors } from "@/data/products";
 
@@ -47,9 +48,7 @@ const categoryIcons: Record<string, typeof Network> = {
 };
 
 // Technical spec filter options
-const POE_OPTIONS = [
-  { value: "true", label: "PoE Support" },
-];
+const POE_OPTIONS = [{ value: "true", label: "PoE Support" }];
 
 const RACK_OPTIONS = [
   { value: "1U", label: "1U Rack Mount" },
@@ -70,6 +69,7 @@ const PORT_OPTIONS = [
 function CatalogueContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const filterTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Read all filter params from URL
   const initialCategory = searchParams.get("category") || "";
@@ -89,8 +89,9 @@ function CatalogueContent() {
   const [sortBy, setSortBy] = useState(initialSortBy);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFiltering, setIsFiltering] = useState(false);
 
-  // Tech spec filters (can be multi-select via comma-separated values)
+  // Tech spec filters (multi-select via comma-separated URL values)
   const [selectedPoE, setSelectedPoE] = useState<string[]>(
     initialPoE ? initialPoE.split(",") : []
   );
@@ -130,11 +131,24 @@ function CatalogueContent() {
     router,
   ]);
 
-  // Simulate loading
-  useState(() => {
+  // Simulate initial loading
+  useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 400);
     return () => clearTimeout(timer);
-  });
+  }, []);
+
+  // Debounced filtering — show skeleton after 300ms
+  useEffect(() => {
+    if (filterTimerRef.current) clearTimeout(filterTimerRef.current);
+
+    filterTimerRef.current = setTimeout(() => {
+      setIsFiltering(true);
+    }, 300);
+
+    return () => {
+      if (filterTimerRef.current) clearTimeout(filterTimerRef.current);
+    };
+  }, [selectedCategory, selectedVendor, stockFilter, selectedPoE, selectedRack, selectedWifi, selectedPort, searchQuery]);
 
   const filteredProducts = useMemo(() => {
     let result = [...products];
@@ -184,10 +198,7 @@ function CatalogueContent() {
     // PoE
     if (selectedPoE.length > 0) {
       result = result.filter((p) =>
-        selectedPoE.some((v) => {
-          if (v === "true") return p.techSpecs.poeSupport === true;
-          return false;
-        })
+        selectedPoE.some((v) => v === "true" && p.techSpecs.poeSupport === true)
       );
     }
 
@@ -279,6 +290,9 @@ function CatalogueContent() {
     selectedPort.length,
   ].filter(Boolean).length;
 
+  // Use isLoading for initial load, isFiltering for filter-induced loading
+  const showSkeletons = isLoading || isFiltering;
+
   return (
     <div className="bg-background min-h-screen">
       {/* Header */}
@@ -291,7 +305,7 @@ function CatalogueContent() {
                 Product Catalogue
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
-                {isLoading ? (
+                {showSkeletons ? (
                   <Skeleton className="h-4 w-48" />
                 ) : (
                   `${filteredProducts.length} product${filteredProducts.length !== 1 ? "s" : ""} found`
@@ -533,7 +547,7 @@ function CatalogueContent() {
                           : "text-muted-foreground hover:bg-accent"
                       }`}
                     >
-                      <NetworkPort className="h-3.5 w-3.5 shrink-0" />
+                      <Cpu className="h-3.5 w-3.5 shrink-0" />
                       {opt.label}
                     </button>
                   ))}
@@ -557,7 +571,7 @@ function CatalogueContent() {
 
           {/* Product Grid */}
           <main className="flex-1 min-w-0">
-            {isLoading ? (
+            {showSkeletons ? (
               <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <Card key={i} className="p-4">
@@ -632,7 +646,6 @@ function ProductCard({ product }: { product: Product }) {
           <Badge variant={stockVariant} size="sm">
             {stockLabel}
           </Badge>
-          {/* Quick tech spec badges */}
           {product.techSpecs.poeSupport && (
             <Badge variant="secondary" size="sm" className="text-[10px]">
               PoE
@@ -699,10 +712,27 @@ function ProductCard({ product }: { product: Product }) {
   );
 }
 
+function CatalogueErrorFallback() {
+  return (
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 text-center">
+      <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+      <h2 className="text-xl font-bold text-navy mb-2">
+        Failed to load catalogue
+      </h2>
+      <p className="text-sm text-muted-foreground mb-4">
+        There was an error loading the product listings. Please try again.
+      </p>
+      <Button onClick={() => window.location.reload()}>Reload Page</Button>
+    </div>
+  );
+}
+
 export default function CataloguePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-background" />}>
-      <CatalogueContent />
-    </Suspense>
+    <ErrorBoundary fallback={<CatalogueErrorFallback />}>
+      <Suspense fallback={<div className="min-h-screen bg-background" />}>
+        <CatalogueContent />
+      </Suspense>
+    </ErrorBoundary>
   );
 }

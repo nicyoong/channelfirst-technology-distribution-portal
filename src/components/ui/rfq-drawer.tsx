@@ -5,6 +5,7 @@ import { X, Minus, Plus, Trash2, FileText, Package } from "lucide-react";
 import { Button, Badge } from "@/components/ui";
 import { useRFQCart, useTierInfo } from "@/hooks/use-rfq-cart";
 import { formatMYR, getTierLabel } from "@/lib/pricing";
+import { ErrorBoundary } from "./error-boundary";
 
 interface RFQDrawerProps {
   isOpen: boolean;
@@ -82,6 +83,25 @@ export function RFQDrawer({ isOpen, onClose, onOpen }: RFQDrawerProps) {
         aria-modal="true"
         aria-label="Request for Quote cart"
       >
+        <ErrorBoundary
+          fallback={
+            <div className="flex-1 flex items-center justify-center p-6">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">
+                  Something went wrong loading the RFQ cart.
+                </p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="mt-3"
+                  onClick={() => window.location.reload()}
+                >
+                  Reload
+                </Button>
+              </div>
+            </div>
+          }
+        >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div className="flex items-center gap-3">
@@ -258,6 +278,7 @@ export function RFQDrawer({ isOpen, onClose, onOpen }: RFQDrawerProps) {
             </Button>
           </div>
         )}
+        </ErrorBoundary>
       </div>
     </>
   );
