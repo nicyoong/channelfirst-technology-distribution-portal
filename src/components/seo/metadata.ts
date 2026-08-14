@@ -42,7 +42,7 @@ export const metadata: Metadata = {
       "Leading IT distributor in Malaysia serving resellers, system integrators, and enterprise customers with networking, servers, endpoints, cybersecurity, and software solutions.",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image.svg",
         width: 1200,
         height: 630,
         alt: "ChannelFirst Technology",
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     title: "ChannelFirst Technology — Malaysia's Trusted IT Distribution Partner",
     description:
       "Leading IT distributor in Malaysia serving resellers, system integrators, and enterprise customers.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.svg"],
     creator: "@channelfirstmy",
   },
   alternates: {

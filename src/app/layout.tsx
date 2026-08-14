@@ -3,6 +3,7 @@ import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { UtilityBar, NavBar, Footer } from "@/components/layout";
 import { JsonLdScript } from "@/components/seo/json-ld";
 import { metadata as sharedMetadata } from "@/components/seo/metadata";
+import { ToastProvider } from "@/contexts/toast-context";
 import "./globals.css";
 
 const inter = Inter({
@@ -46,12 +47,14 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <UtilityBar />
-        <NavBar />
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <ToastProvider>
+          <UtilityBar />
+          <NavBar />
+          <main id="main-content" className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </ToastProvider>
       </body>
     </html>
   );

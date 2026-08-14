@@ -80,6 +80,8 @@ interface NavBarProps {
   onSearch?: (query: string) => void;
 }
 
+export type { NavBarProps };
+
 export function NavBar({ cartCount = 0, onSearch }: NavBarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = React.useState(false);
