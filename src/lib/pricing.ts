@@ -13,11 +13,15 @@ export interface TieredPrice {
 /**
  * Get the applicable tier for a given quantity.
  * Returns the tier whose range contains qty, or the last tier if qty exceeds all ranges.
+ * @throws Error if tiers array is empty.
  */
 export function getTierForQty(
   tiers: PriceTier[],
   qty: number
 ): PriceTier {
+  if (tiers.length === 0) {
+    throw new Error("getTierForQty: tiers array cannot be empty");
+  }
   return (
     tiers.find((t) => qty >= t.minQty && (t.maxQty === null || qty <= t.maxQty)) ??
     tiers[tiers.length - 1]
@@ -54,8 +58,9 @@ export function getNextTier(tiers: PriceTier[], qty: number): PriceTier | null {
   const currentTier = getTierForQty(tiers, qty);
   const currentIndex = tiers.indexOf(currentTier);
   // tiers are sorted ascending by minQty, so lower index = worse tier
-  if (currentIndex > 0) {
-    return tiers[currentIndex - 1];
+  // Return the NEXT tier (higher index = better discount)
+  if (currentIndex < tiers.length - 1) {
+    return tiers[currentIndex + 1];
   }
   return null;
 }
