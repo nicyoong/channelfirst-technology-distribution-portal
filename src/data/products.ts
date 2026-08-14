@@ -1,5 +1,12 @@
 import type { TieredPrice } from "@/lib/pricing";
 
+export interface TechSpecs {
+  poeSupport?: boolean;
+  rackMountable?: "1U" | "2U" | null;
+  wifiStandard?: "Wi-Fi 6" | "Wi-Fi 6E" | "Wi-Fi 7" | null;
+  portCount?: number | null;
+}
+
 export interface Product {
   sku: string;
   name: string;
@@ -12,6 +19,7 @@ export interface Product {
   stock: "in-stock" | "low-stock" | "out-of-stock" | "digital";
   priceNote: string;
   tieredPrice?: TieredPrice;
+  techSpecs: TechSpecs;
   branchStock: { branch: string; stock: number }[];
   image?: string;
   datasheet?: string;
@@ -57,6 +65,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 5 },
     ],
     warranty: "Limited lifetime warranty",
+    techSpecs: { poeSupport: false, rackMountable: null, wifiStandard: null, portCount: 24 },
     tags: ["switch", "networking", "cisco", "enterprise"],
   },
   {
@@ -96,6 +105,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 0 },
     ],
     warranty: "3-year ProSupport with next-business-day on-site",
+    techSpecs: { poeSupport: false, rackMountable: "2U", wifiStandard: null, portCount: null },
     tags: ["server", "dell", "rack", "enterprise"],
   },
   {
@@ -135,6 +145,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 1 },
     ],
     warranty: "3-year limited warranty with on-site upgrade available",
+    techSpecs: { poeSupport: false, rackMountable: "2U", wifiStandard: null, portCount: null },
     tags: ["server", "hpe", "rack", "enterprise"],
   },
   {
@@ -174,6 +185,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 3 },
     ],
     warranty: "3-year courier/restore service",
+    techSpecs: { poeSupport: false, rackMountable: null, wifiStandard: null, portCount: null },
     tags: ["laptop", "lenovo", "thinkpad", "ultrabook"],
   },
   {
@@ -213,6 +225,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 1 },
     ],
     warranty: "1-year FortiCare FutureLab (upgradeable to 3 years)",
+    techSpecs: { poeSupport: false, rackMountable: "1U", wifiStandard: null, portCount: 8 },
     tags: ["firewall", "fortinet", "security", "sdwan"],
   },
   {
@@ -252,6 +265,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 4 },
     ],
     warranty: "1-year limited warranty",
+    techSpecs: { poeSupport: true, rackMountable: null, wifiStandard: "Wi-Fi 6", portCount: null },
     tags: ["wifi", "aruba", "access-point", "wifi6"],
   },
   {
@@ -291,6 +305,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 3 },
     ],
     warranty: "1-year limited warranty",
+    techSpecs: { poeSupport: false, rackMountable: null, wifiStandard: null, portCount: 10 },
     tags: ["gateway", "ubiquiti", "unifi", "all-in-one"],
   },
   {
@@ -324,6 +339,7 @@ export const products: Product[] = [
     },
     branchStock: [],
     warranty: "N/A — cloud subscription",
+    techSpecs: { poeSupport: false, rackMountable: null, wifiStandard: null, portCount: null },
     tags: ["software", "microsoft", "office365", "licensing"],
   },
   {
@@ -363,6 +379,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 0 },
     ],
     warranty: "2-year limited hardware warranty",
+    techSpecs: { poeSupport: true, rackMountable: null, wifiStandard: null, portCount: null },
     tags: ["videoconferencing", "logitech", "rally", "4k"],
   },
   {
@@ -402,6 +419,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 0 },
     ],
     warranty: "5-year limited warranty (20,000 hour laser source)",
+    techSpecs: { poeSupport: false, rackMountable: null, wifiStandard: null, portCount: null },
     tags: ["projector", "epson", "4k", "laser"],
   },
   {
@@ -441,6 +459,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 2 },
     ],
     warranty: "3-year limited warranty",
+    techSpecs: { poeSupport: false, rackMountable: "1U", wifiStandard: null, portCount: null },
     tags: ["nas", "synology", "storage", "rackmount"],
   },
   {
@@ -480,6 +499,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 1 },
     ],
     warranty: "4-year warranty (2-year battery replacement warranty)",
+    techSpecs: { poeSupport: false, rackMountable: "2U", wifiStandard: null, portCount: null },
     tags: ["ups", "apc", "power", "battery"],
   },
 ];
