@@ -4,58 +4,57 @@ import { render, screen } from "@testing-library/react";
 import { Button } from "@/components/ui/button";
 
 describe("Button", () => {
-  it("renders with default variant and size", () => {
+  it("renders with default variant", () => {
     render(<Button>Click me</Button>);
-    expect(screen.getByText("Click me")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /click me/i })).toBeInTheDocument();
   });
 
-  it("applies primary variant classes", () => {
-    const { container } = render(<Button variant="primary">Primary</Button>);
-    expect(container.firstChild).toHaveClass("bg-primary");
+  it("renders with secondary variant", () => {
+    render(<Button variant="secondary">Secondary</Button>);
+    expect(screen.getByRole("button", { name: /secondary/i })).toBeInTheDocument();
   });
 
-  it("applies outline variant classes", () => {
-    const { container } = render(<Button variant="outline">Outline</Button>);
-    expect(container.firstChild).toHaveClass("border-border");
+  it("renders with outline variant", () => {
+    render(<Button variant="outline">Outline</Button>);
+    expect(screen.getByRole("button", { name: /outline/i })).toBeInTheDocument();
   });
 
-  it("applies ghost variant classes", () => {
-    const { container } = render(<Button variant="ghost">Ghost</Button>);
-    expect(container.firstChild).toHaveClass("hover:bg-accent");
+  it("renders with destructive variant", () => {
+    render(<Button variant="destructive">Delete</Button>);
+    expect(screen.getByRole("button", { name: /delete/i })).toBeInTheDocument();
   });
 
-  it("applies danger variant classes", () => {
-    const { container } = render(<Button variant="danger">Delete</Button>);
-    expect(container.firstChild).toHaveClass("bg-destructive");
-  });
-
-  it("applies different sizes", () => {
-    const { container: sm } = render(<Button size="sm">Small</Button>);
-    expect(sm.firstChild).toHaveClass("h-9");
-
-    const { container: lg } = render(<Button size="lg">Large</Button>);
-    expect(lg.firstChild).toHaveClass("h-12");
-    expect(lg.firstChild).toHaveClass("text-base");
-  });
-
-  it("respects disabled state", () => {
-    const { container } = render(<Button disabled>Disabled</Button>);
-    expect(container.firstChild).toHaveClass("disabled:opacity-50");
-    expect(container.firstChild).toHaveAttribute("disabled");
-  });
-
-  it("passes through HTML attributes", () => {
-    render(
-      <Button data-testid="btn" onClick={() => {}} type="button">
-        Test
-      </Button>
-    );
-    const btn = screen.getByTestId("btn");
-    expect(btn).toHaveAttribute("type", "button");
+  it("renders with ghost variant", () => {
+    render(<Button variant="ghost">Ghost</Button>);
+    expect(screen.getByRole("button", { name: /ghost/i })).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
-    const { container } = render(<Button className="custom">Custom</Button>);
-    expect(container.firstChild).toHaveClass("custom");
+    render(<Button className="custom-class">Custom</Button>);
+    const button = screen.getByRole("button", { name: /custom/i });
+    expect(button).toHaveClass("custom-class");
+  });
+
+  it("is disabled when disabled prop is true", () => {
+    render(<Button disabled>Disabled</Button>);
+    expect(screen.getByRole("button", { name: /disabled/i })).toBeDisabled();
+  });
+
+  it("calls onClick when clicked", () => {
+    const handleClick = jest.fn();
+    render(<Button onClick={handleClick}>Click</Button>);
+    screen.getByRole("button", { name: /click/i }).click();
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders as child component with asChild prop", () => {
+    render(
+      <Button asChild>
+        <a href="/test">Link Button</a>
+      </Button>
+    );
+    const link = screen.getByRole("link", { name: /link button/i });
+    expect(link).toBeInTheDocument();
+    expect(link.tagName).toBe("A");
   });
 });

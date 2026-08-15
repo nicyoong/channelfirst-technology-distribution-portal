@@ -10,31 +10,17 @@ import {
   MapPin,
   FileText,
   CheckCircle2,
-  AlertCircle,
   ShieldCheck,
 } from "lucide-react";
-import { Button, Badge, Input, Card, SectionHeading } from "@/components/ui";
+import { Button, Badge, Input, Card } from "@/components/ui";
 import { useToast } from "@/contexts/toast-context";
+import {
+  resellerRegisterSchema,
+  FREE_EMAIL_DOMAINS,
+  type ResellerRegisterForm,
+} from "@/lib/validations/reseller-register";
 
-const FREE_EMAIL_DOMAINS = [
-  "gmail.com",
-  "yahoo.com",
-  "hotmail.com",
-  "outlook.com",
-  "aol.com",
-  "icloud.com",
-  "mail.com",
-  "protonmail.com",
-  "yandex.com",
-];
-
-const BUSINESS_TYPES = [
-  "Reseller",
-  "System Integrator",
-  "Managed Service Provider",
-  "Educational Institution",
-  "Government / GLC",
-];
+const BUSINESS_TYPES = ["Sdn Bhd", "Enterprise", "LLP", "System Integrator"];
 
 const STATES = [
   "Johor",
@@ -70,25 +56,25 @@ export default function ResellerRegisterPage() {
   const [submitted, setSubmitted] = useState(false);
   const [step, setStep] = useState(1);
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<ResellerRegisterForm>({
     companyName: "",
     ssmNumber: "",
-    businessType: "",
+    businessType: "Sdn Bhd",
     contactName: "",
     email: "",
     phone: "",
     state: "",
     monthlyVolume: "",
-    categories: [] as string[],
+    categories: [],
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof ResellerRegisterForm, string>>>({});
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
   const toggleCategory = (cat: string) => {
@@ -98,38 +84,52 @@ export default function ResellerRegisterPage() {
         ? prev.categories.filter((c) => c !== cat)
         : [...prev.categories, cat],
     }));
+    setErrors((prev) => ({ ...prev, categories: undefined }));
   };
 
   const validateStep1 = (): boolean => {
-    const errs: Record<string, string> = {};
-    if (!form.companyName.trim()) errs.companyName = "Company name is required";
-    if (!form.ssmNumber.trim()) errs.ssmNumber = "SSM/registration number is required";
-    else if (!/^[A-Z0-9\-\/ ]{3,30}$/i.test(form.ssmNumber.trim()))
-      errs.ssmNumber = "Please enter a valid registration number";
-    if (!form.businessType) errs.businessType = "Please select a business type";
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
+    const result = resellerRegisterSchema.omit({
+      contactName: true,
+      email: true,
+      phone: true,
+      state: true,
+      monthlyVolume: true,
+      categories: true,
+    }).safeParse({
+      companyName: form.companyName,
+      ssmNumber: form.ssmNumber,
+      businessType: form.businessType,
+    });
+
+    if (!result.success) {
+      const fieldErrors: Partial<Record<keyof ResellerRegisterForm, string>> = {};
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as keyof ResellerRegisterForm;
+        fieldErrors[field] = issue.message;
+      }
+      setErrors(fieldErrors);
+      return false;
+    }
+
+    setErrors({});
+    return true;
   };
 
   const validateStep2 = (): boolean => {
-    const errs: Record<string, string> = {};
-    if (!form.contactName.trim()) errs.contactName = "Contact person is required";
-    if (!form.email.trim()) {
-      errs.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      errs.email = "Please enter a valid email address";
-    } else {
-      const domain = form.email.split("@")[1]?.toLowerCase();
-      if (FREE_EMAIL_DOMAINS.includes(domain || ""))
-        errs.email = "Please use your work email address";
+    const result = resellerRegisterSchema.safeParse(form);
+
+    if (!result.success) {
+      const fieldErrors: Partial<Record<keyof ResellerRegisterForm, string>> = {};
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as keyof ResellerRegisterForm;
+        fieldErrors[field] = issue.message;
+      }
+      setErrors(fieldErrors);
+      return false;
     }
-    if (!form.phone.trim()) errs.phone = "Phone number is required";
-    if (!form.state) errs.state = "Please select a state/region";
-    if (!form.monthlyVolume) errs.monthlyVolume = "Please select a volume range";
-    if (form.categories.length === 0)
-      errs.categories = "Please select at least one category";
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
+
+    setErrors({});
+    return true;
   };
 
   const handleNext = () => {
@@ -243,6 +243,7 @@ export default function ResellerRegisterPage() {
                     Company Information
                   </h2>
 
+                  {/* Company Name */}
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1.5">
                       Company Name <span className="text-destructive">*</span>
@@ -251,7 +252,7 @@ export default function ResellerRegisterPage() {
                       <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         name="companyName"
-                        placeholder="e.g. Nexus Integrated Systems Sdn Bhd"
+                        placeholder="e.g. Nexus Integrated Systems Sdn Bhd (no leading/trailing spaces)"
                         value={form.companyName}
                         onChange={handleChange}
                         className={`pl-10 ${errors.companyName ? "border-destructive" : ""}`}
@@ -264,24 +265,27 @@ export default function ResellerRegisterPage() {
                     )}
                   </div>
 
+                  {/* SSM Number + Business Type */}
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-1.5">
-                        SSM / Registration No.{" "}
-                        <span className="text-destructive">*</span>
+                        SSM Registration No. <span className="text-destructive">*</span>
                       </label>
                       <Input
                         name="ssmNumber"
-                        placeholder="e.g. 199901000123"
+                        placeholder="e.g. 199901000123 or 1234567-A"
                         value={form.ssmNumber}
                         onChange={handleChange}
-                        className={errors.ssmNumber ? "border-destructive" : ""}
+                        className={`pl-3 ${errors.ssmNumber ? "border-destructive" : ""}`}
                       />
                       {errors.ssmNumber && (
                         <p className="mt-1 text-xs text-destructive">
                           {errors.ssmNumber}
                         </p>
                       )}
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        12–14 digits, or legacy format with dash (e.g. 1234567-A)
+                      </p>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-1.5">
@@ -289,8 +293,13 @@ export default function ResellerRegisterPage() {
                       </label>
                       <select
                         name="businessType"
-                        value={form.businessType}
-                        onChange={handleChange}
+                        value={form.businessType ?? ""}
+                        onChange={(e) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            businessType: e.target.value as ResellerRegisterForm["businessType"],
+                          }))
+                        }
                         className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary ${
                           errors.businessType ? "border-destructive" : ""
                         }`}
@@ -325,6 +334,7 @@ export default function ResellerRegisterPage() {
                     Contact & Preferences
                   </h2>
 
+                  {/* Contact Name */}
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1.5">
                       Contact Person <span className="text-destructive">*</span>
@@ -346,6 +356,7 @@ export default function ResellerRegisterPage() {
                     )}
                   </div>
 
+                  {/* Email + Phone */}
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-1.5">
@@ -368,8 +379,8 @@ export default function ResellerRegisterPage() {
                         </p>
                       )}
                       <p className="mt-1 text-xs text-muted-foreground">
-                        Please use your company email. Free email services are
-                        not accepted.
+                        Free email services ({FREE_EMAIL_DOMAINS.slice(0, 3).join(", ")}…
+                        ) are not accepted.
                       </p>
                     </div>
                     <div>
@@ -395,6 +406,7 @@ export default function ResellerRegisterPage() {
                     </div>
                   </div>
 
+                  {/* State + Monthly Volume */}
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-1.5">
@@ -452,6 +464,7 @@ export default function ResellerRegisterPage() {
                     </div>
                   </div>
 
+                  {/* Categories */}
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
                       Product Categories of Interest{" "}
@@ -480,6 +493,7 @@ export default function ResellerRegisterPage() {
                     )}
                   </div>
 
+                  {/* Document Upload */}
                   <div className="border border-dashed border-border rounded-lg p-6 text-center">
                     <FileText className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                     <p className="text-sm font-medium text-foreground">
@@ -496,6 +510,7 @@ export default function ResellerRegisterPage() {
                     />
                   </div>
 
+                  {/* Actions */}
                   <div className="flex justify-between gap-4 pt-2">
                     <Button
                       type="button"

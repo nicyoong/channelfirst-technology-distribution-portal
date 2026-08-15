@@ -1,3 +1,12 @@
+import type { TieredPrice } from "@/lib/pricing";
+
+export interface TechSpecs {
+  poeSupport?: boolean;
+  rackMountable?: "1U" | "2U" | null;
+  wifiStandard?: "Wi-Fi 6" | "Wi-Fi 6E" | "Wi-Fi 7" | null;
+  portCount?: number | null;
+}
+
 export interface Product {
   sku: string;
   name: string;
@@ -9,6 +18,8 @@ export interface Product {
   fullSpecs: { label: string; value: string }[];
   stock: "in-stock" | "low-stock" | "out-of-stock" | "digital";
   priceNote: string;
+  tieredPrice?: TieredPrice;
+  techSpecs: TechSpecs;
   branchStock: { branch: string; stock: number }[];
   image?: string;
   datasheet?: string;
@@ -38,6 +49,14 @@ export const products: Product[] = [
     ],
     stock: "in-stock",
     priceNote: "Login for reseller pricing",
+    tieredPrice: {
+      listPrice: 1500,
+      tiers: [
+        { minQty: 1, maxQty: 9, unitPrice: 1500, discountPercent: 0 },
+        { minQty: 10, maxQty: 49, unitPrice: 1350, discountPercent: 10 },
+        { minQty: 50, maxQty: null, unitPrice: 1200, discountPercent: 20 },
+      ],
+    },
     branchStock: [
       { branch: "Kuala Lumpur HQ", stock: 47 },
       { branch: "Penang", stock: 12 },
@@ -46,6 +65,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 5 },
     ],
     warranty: "Limited lifetime warranty",
+    techSpecs: { poeSupport: false, rackMountable: null, wifiStandard: null, portCount: 24 },
     tags: ["switch", "networking", "cisco", "enterprise"],
   },
   {
@@ -69,6 +89,14 @@ export const products: Product[] = [
     ],
     stock: "in-stock",
     priceNote: "Login for reseller pricing",
+    tieredPrice: {
+      listPrice: 12500,
+      tiers: [
+        { minQty: 1, maxQty: 4, unitPrice: 12500, discountPercent: 0 },
+        { minQty: 5, maxQty: 9, unitPrice: 11250, discountPercent: 10 },
+        { minQty: 10, maxQty: null, unitPrice: 10000, discountPercent: 20 },
+      ],
+    },
     branchStock: [
       { branch: "Kuala Lumpur HQ", stock: 15 },
       { branch: "Penang", stock: 4 },
@@ -77,6 +105,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 0 },
     ],
     warranty: "3-year ProSupport with next-business-day on-site",
+    techSpecs: { poeSupport: false, rackMountable: "2U", wifiStandard: null, portCount: null },
     tags: ["server", "dell", "rack", "enterprise"],
   },
   {
@@ -100,6 +129,14 @@ export const products: Product[] = [
     ],
     stock: "in-stock",
     priceNote: "Login for reseller pricing",
+    tieredPrice: {
+      listPrice: 11800,
+      tiers: [
+        { minQty: 1, maxQty: 4, unitPrice: 11800, discountPercent: 0 },
+        { minQty: 5, maxQty: 9, unitPrice: 10620, discountPercent: 10 },
+        { minQty: 10, maxQty: null, unitPrice: 9440, discountPercent: 20 },
+      ],
+    },
     branchStock: [
       { branch: "Kuala Lumpur HQ", stock: 22 },
       { branch: "Penang", stock: 6 },
@@ -108,6 +145,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 1 },
     ],
     warranty: "3-year limited warranty with on-site upgrade available",
+    techSpecs: { poeSupport: false, rackMountable: "2U", wifiStandard: null, portCount: null },
     tags: ["server", "hpe", "rack", "enterprise"],
   },
   {
@@ -131,6 +169,14 @@ export const products: Product[] = [
     ],
     stock: "in-stock",
     priceNote: "Login for reseller pricing",
+    tieredPrice: {
+      listPrice: 5200,
+      tiers: [
+        { minQty: 1, maxQty: 9, unitPrice: 5200, discountPercent: 0 },
+        { minQty: 10, maxQty: 24, unitPrice: 4680, discountPercent: 10 },
+        { minQty: 25, maxQty: null, unitPrice: 4160, discountPercent: 20 },
+      ],
+    },
     branchStock: [
       { branch: "Kuala Lumpur HQ", stock: 34 },
       { branch: "Penang", stock: 8 },
@@ -139,6 +185,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 3 },
     ],
     warranty: "3-year courier/restore service",
+    techSpecs: { poeSupport: false, rackMountable: null, wifiStandard: null, portCount: null },
     tags: ["laptop", "lenovo", "thinkpad", "ultrabook"],
   },
   {
@@ -162,6 +209,14 @@ export const products: Product[] = [
     ],
     stock: "in-stock",
     priceNote: "Login for reseller pricing",
+    tieredPrice: {
+      listPrice: 8500,
+      tiers: [
+        { minQty: 1, maxQty: 4, unitPrice: 8500, discountPercent: 0 },
+        { minQty: 5, maxQty: 9, unitPrice: 7650, discountPercent: 10 },
+        { minQty: 10, maxQty: null, unitPrice: 6800, discountPercent: 20 },
+      ],
+    },
     branchStock: [
       { branch: "Kuala Lumpur HQ", stock: 18 },
       { branch: "Penang", stock: 5 },
@@ -170,6 +225,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 1 },
     ],
     warranty: "1-year FortiCare FutureLab (upgradeable to 3 years)",
+    techSpecs: { poeSupport: false, rackMountable: "1U", wifiStandard: null, portCount: 8 },
     tags: ["firewall", "fortinet", "security", "sdwan"],
   },
   {
@@ -193,6 +249,14 @@ export const products: Product[] = [
     ],
     stock: "in-stock",
     priceNote: "Login for reseller pricing",
+    tieredPrice: {
+      listPrice: 850,
+      tiers: [
+        { minQty: 1, maxQty: 9, unitPrice: 850, discountPercent: 0 },
+        { minQty: 10, maxQty: 24, unitPrice: 765, discountPercent: 10 },
+        { minQty: 25, maxQty: null, unitPrice: 680, discountPercent: 20 },
+      ],
+    },
     branchStock: [
       { branch: "Kuala Lumpur HQ", stock: 56 },
       { branch: "Penang", stock: 14 },
@@ -201,6 +265,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 4 },
     ],
     warranty: "1-year limited warranty",
+    techSpecs: { poeSupport: true, rackMountable: null, wifiStandard: "Wi-Fi 6", portCount: null },
     tags: ["wifi", "aruba", "access-point", "wifi6"],
   },
   {
@@ -224,6 +289,14 @@ export const products: Product[] = [
     ],
     stock: "in-stock",
     priceNote: "Login for reseller pricing",
+    tieredPrice: {
+      listPrice: 2100,
+      tiers: [
+        { minQty: 1, maxQty: 9, unitPrice: 2100, discountPercent: 0 },
+        { minQty: 10, maxQty: 24, unitPrice: 1890, discountPercent: 10 },
+        { minQty: 25, maxQty: null, unitPrice: 1680, discountPercent: 20 },
+      ],
+    },
     branchStock: [
       { branch: "Kuala Lumpur HQ", stock: 21 },
       { branch: "Penang", stock: 7 },
@@ -232,6 +305,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 3 },
     ],
     warranty: "1-year limited warranty",
+    techSpecs: { poeSupport: false, rackMountable: null, wifiStandard: null, portCount: 10 },
     tags: ["gateway", "ubiquiti", "unifi", "all-in-one"],
   },
   {
@@ -255,8 +329,17 @@ export const products: Product[] = [
     ],
     stock: "digital",
     priceNote: "Login for reseller pricing",
+    tieredPrice: {
+      listPrice: 420,
+      tiers: [
+        { minQty: 1, maxQty: 49, unitPrice: 420, discountPercent: 0 },
+        { minQty: 50, maxQty: 199, unitPrice: 378, discountPercent: 10 },
+        { minQty: 200, maxQty: null, unitPrice: 336, discountPercent: 20 },
+      ],
+    },
     branchStock: [],
     warranty: "N/A — cloud subscription",
+    techSpecs: { poeSupport: false, rackMountable: null, wifiStandard: null, portCount: null },
     tags: ["software", "microsoft", "office365", "licensing"],
   },
   {
@@ -280,6 +363,14 @@ export const products: Product[] = [
     ],
     stock: "in-stock",
     priceNote: "Login for reseller pricing",
+    tieredPrice: {
+      listPrice: 6800,
+      tiers: [
+        { minQty: 1, maxQty: 4, unitPrice: 6800, discountPercent: 0 },
+        { minQty: 5, maxQty: 9, unitPrice: 6120, discountPercent: 10 },
+        { minQty: 10, maxQty: null, unitPrice: 5440, discountPercent: 20 },
+      ],
+    },
     branchStock: [
       { branch: "Kuala Lumpur HQ", stock: 9 },
       { branch: "Penang", stock: 3 },
@@ -288,6 +379,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 0 },
     ],
     warranty: "2-year limited hardware warranty",
+    techSpecs: { poeSupport: true, rackMountable: null, wifiStandard: null, portCount: null },
     tags: ["videoconferencing", "logitech", "rally", "4k"],
   },
   {
@@ -311,6 +403,14 @@ export const products: Product[] = [
     ],
     stock: "low-stock",
     priceNote: "Login for reseller pricing",
+    tieredPrice: {
+      listPrice: 9500,
+      tiers: [
+        { minQty: 1, maxQty: 4, unitPrice: 9500, discountPercent: 0 },
+        { minQty: 5, maxQty: 9, unitPrice: 8550, discountPercent: 10 },
+        { minQty: 10, maxQty: null, unitPrice: 7600, discountPercent: 20 },
+      ],
+    },
     branchStock: [
       { branch: "Kuala Lumpur HQ", stock: 4 },
       { branch: "Penang", stock: 1 },
@@ -319,6 +419,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 0 },
     ],
     warranty: "5-year limited warranty (20,000 hour laser source)",
+    techSpecs: { poeSupport: false, rackMountable: null, wifiStandard: null, portCount: null },
     tags: ["projector", "epson", "4k", "laser"],
   },
   {
@@ -342,6 +443,14 @@ export const products: Product[] = [
     ],
     stock: "in-stock",
     priceNote: "Login for reseller pricing",
+    tieredPrice: {
+      listPrice: 2800,
+      tiers: [
+        { minQty: 1, maxQty: 9, unitPrice: 2800, discountPercent: 0 },
+        { minQty: 10, maxQty: 24, unitPrice: 2520, discountPercent: 10 },
+        { minQty: 25, maxQty: null, unitPrice: 2240, discountPercent: 20 },
+      ],
+    },
     branchStock: [
       { branch: "Kuala Lumpur HQ", stock: 11 },
       { branch: "Penang", stock: 4 },
@@ -350,6 +459,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 2 },
     ],
     warranty: "3-year limited warranty",
+    techSpecs: { poeSupport: false, rackMountable: "1U", wifiStandard: null, portCount: null },
     tags: ["nas", "synology", "storage", "rackmount"],
   },
   {
@@ -373,6 +483,14 @@ export const products: Product[] = [
     ],
     stock: "in-stock",
     priceNote: "Login for reseller pricing",
+    tieredPrice: {
+      listPrice: 3200,
+      tiers: [
+        { minQty: 1, maxQty: 9, unitPrice: 3200, discountPercent: 0 },
+        { minQty: 10, maxQty: 24, unitPrice: 2880, discountPercent: 10 },
+        { minQty: 25, maxQty: null, unitPrice: 2560, discountPercent: 20 },
+      ],
+    },
     branchStock: [
       { branch: "Kuala Lumpur HQ", stock: 14 },
       { branch: "Penang", stock: 5 },
@@ -381,6 +499,7 @@ export const products: Product[] = [
       { branch: "Kuching", stock: 1 },
     ],
     warranty: "4-year warranty (2-year battery replacement warranty)",
+    techSpecs: { poeSupport: false, rackMountable: "2U", wifiStandard: null, portCount: null },
     tags: ["ups", "apc", "power", "battery"],
   },
 ];

@@ -75,6 +75,9 @@ const mainNavLinks = [
   { label: "Contact", href: "/contact" },
 ];
 
+import { RFQDrawer } from "@/components/ui/rfq-drawer";
+import { useRFQCart } from "@/hooks/use-rfq-cart";
+
 interface NavBarProps {
   cartCount?: number;
   onSearch?: (query: string) => void;
@@ -82,7 +85,8 @@ interface NavBarProps {
 
 export type { NavBarProps };
 
-export function NavBar({ cartCount = 0, onSearch }: NavBarProps) {
+export function NavBar({ cartCount: _cartCount = 0, onSearch }: NavBarProps) {
+  const { items, isOpen, setIsOpen, totalItems } = useRFQCart();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [productsOpen, setProductsOpen] = React.useState(false);
@@ -257,19 +261,19 @@ export function NavBar({ cartCount = 0, onSearch }: NavBarProps) {
               </Link>
 
               {/* RFQ Cart */}
-              <Link href="/rfq">
-                <button
-                  className="relative flex h-10 w-10 items-center justify-center rounded-md border border-input text-foreground transition-colors hover:bg-accent"
-                  aria-label={`RFQ cart with ${cartCount} items`}
-                >
-                  <FileText className="h-5 w-5" />
-                  {cartCount > 0 && (
-                    <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
-                      {cartCount}
-                    </span>
-                  )}
-                </button>
-              </Link>
+              <button
+                onClick={() => setIsOpen(true)}
+                className="relative flex h-10 w-10 items-center justify-center rounded-md border border-input text-foreground transition-colors hover:bg-accent"
+                aria-label={`RFQ cart with ${totalItems} items`}
+              >
+                <FileText className="h-5 w-5" />
+                {totalItems > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
+                    {totalItems}
+                  </span>
+                )}
+              </button>
+              <RFQDrawer isOpen={isOpen} onClose={() => setIsOpen(false)} onOpen={() => {}} />
 
               {/* Mobile hamburger */}
               <button

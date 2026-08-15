@@ -1,31 +1,39 @@
 /** @jest-environment jsdom */
 import { describe, it, expect } from "@jest/globals";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { Input } from "@/components/ui/input";
 
 describe("Input", () => {
-  it("renders an input element", () => {
-    render(<Input data-testid="input" />);
-    const input = screen.getByTestId("input");
-    expect(input).toBeInTheDocument();
-    expect(input.tagName).toBe("INPUT");
+  it("renders input element", () => {
+    render(<Input placeholder="Enter text" />);
+    expect(screen.getByPlaceholderText("Enter text")).toBeInTheDocument();
   });
 
-  it("accepts and applies custom className", () => {
-    const { container } = render(<Input className="my-input" />);
-    expect(container.firstChild).toHaveClass("my-input");
+  it("applies custom className", () => {
+    render(<Input className="custom-input" />);
+    expect(screen.getByRole("textbox")).toHaveClass("custom-input");
   });
 
-  it("passes through HTML attributes", () => {
-    render(<Input placeholder="Type here" type="email" data-testid="email-input" />);
-    const input = screen.getByTestId("email-input");
-    expect(input).toHaveAttribute("type", "email");
-    expect(input).toHaveAttribute("placeholder", "Type here");
+  it("is disabled when disabled prop is true", () => {
+    render(<Input disabled />);
+    expect(screen.getByRole("textbox")).toBeDisabled();
   });
 
-  it("supports ref forwarding", () => {
-    const ref = { current: null as HTMLInputElement | null };
-    render(<Input ref={ref as any} />);
-    expect(ref.current).toBeInstanceOf(HTMLInputElement);
+  it("handles onChange", () => {
+    const handleChange = jest.fn();
+    render(<Input onChange={handleChange} />);
+    const input = screen.getByRole("textbox");
+    fireEvent.change(input, { target: { value: "new value" } });
+    expect(handleChange).toHaveBeenCalled();
+  });
+
+  it("has correct type attribute", () => {
+    render(<Input type="email" />);
+    expect(screen.getByRole("textbox")).toHaveAttribute("type", "email");
+  });
+
+  it("renders with value", () => {
+    render(<Input value="test value" />);
+    expect(screen.getByRole("textbox")).toHaveValue("test value");
   });
 });

@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useMemo, Suspense } from "react";
+import { useState, useMemo, Suspense, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   Search,
   Filter,
-  ChevronDown,
   Network,
   Server,
   Monitor,
@@ -15,6 +14,11 @@ import {
   Cable,
   CheckCircle2,
   X,
+  Zap,
+  HardDrive,
+  Wifi,
+  Cpu,
+  AlertCircle,
 } from "lucide-react";
 import {
   Badge,
@@ -26,6 +30,7 @@ import {
   Breadcrumbs,
   type BreadcrumbItem,
 } from "@/components/ui";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import type { Product } from "@/data/products";
 import { products, categories, vendors } from "@/data/products";
 
@@ -42,27 +47,113 @@ const categoryIcons: Record<string, typeof Network> = {
   accessories: Cable,
 };
 
+// Technical spec filter options
+const POE_OPTIONS = [{ value: "true", label: "PoE Support" }];
+
+const RACK_OPTIONS = [
+  { value: "1U", label: "1U Rack Mount" },
+  { value: "2U", label: "2U Rack Mount" },
+];
+
+const WIFI_OPTIONS = [
+  { value: "Wi-Fi 6", label: "Wi-Fi 6 (802.11ax)" },
+  { value: "Wi-Fi 6E", label: "Wi-Fi 6E" },
+  { value: "Wi-Fi 7", label: "Wi-Fi 7 (802.11be)" },
+];
+
+const PORT_OPTIONS = [
+  { value: "24", label: "24 Ports" },
+  { value: "48", label: "48 Ports" },
+];
+
 function CatalogueContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const filterTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Read all filter params from URL
   const initialCategory = searchParams.get("category") || "";
   const initialSearch = searchParams.get("search") || "";
+  const initialVendor = searchParams.get("vendor") || "";
+  const initialStock = searchParams.get("stock") || "";
+  const initialSortBy = searchParams.get("sort") || "name-asc";
+  const initialPoE = searchParams.get("poe") || "";
+  const initialRack = searchParams.get("rack") || "";
+  const initialWifi = searchParams.get("wifi") || "";
+  const initialPort = searchParams.get("port") || "";
 
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  const [selectedVendor, setSelectedVendor] = useState("");
-  const [stockFilter, setStockFilter] = useState("");
-  const [sortBy, setSortBy] = useState("name-asc");
+  const [selectedVendor, setSelectedVendor] = useState(initialVendor);
+  const [stockFilter, setStockFilter] = useState(initialStock);
+  const [sortBy, setSortBy] = useState(initialSortBy);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFiltering, setIsFiltering] = useState(false);
 
-  useState(() => {
+  // Tech spec filters (multi-select via comma-separated URL values)
+  const [selectedPoE, setSelectedPoE] = useState<string[]>(
+    initialPoE ? initialPoE.split(",") : []
+  );
+  const [selectedRack, setSelectedRack] = useState<string[]>(
+    initialRack ? initialRack.split(",") : []
+  );
+  const [selectedWifi, setSelectedWifi] = useState<string[]>(
+    initialWifi ? initialWifi.split(",") : []
+  );
+  const [selectedPort, setSelectedPort] = useState<string[]>(
+    initialPort ? initialPort.split(",") : []
+  );
+
+  // Sync filters to URL
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchQuery) params.set("search", searchQuery);
+    if (selectedCategory) params.set("category", selectedCategory);
+    if (selectedVendor) params.set("vendor", selectedVendor);
+    if (stockFilter) params.set("stock", stockFilter);
+    if (sortBy !== "name-asc") params.set("sort", sortBy);
+    if (selectedPoE.length) params.set("poe", selectedPoE.join(","));
+    if (selectedRack.length) params.set("rack", selectedRack.join(","));
+    if (selectedWifi.length) params.set("wifi", selectedWifi.join(","));
+    if (selectedPort.length) params.set("port", selectedPort.join(","));
+    router.replace(`/catalogue?${params.toString()}`, { scroll: false });
+  }, [
+    searchQuery,
+    selectedCategory,
+    selectedVendor,
+    stockFilter,
+    sortBy,
+    selectedPoE,
+    selectedRack,
+    selectedWifi,
+    selectedPort,
+    router,
+  ]);
+
+  // Simulate initial loading
+  useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 400);
     return () => clearTimeout(timer);
-  });
+  }, []);
+
+  // Debounced filtering — show skeleton after 300ms
+  useEffect(() => {
+    if (filterTimerRef.current) clearTimeout(filterTimerRef.current);
+
+    filterTimerRef.current = setTimeout(() => {
+      setIsFiltering(true);
+    }, 300);
+
+    return () => {
+      if (filterTimerRef.current) clearTimeout(filterTimerRef.current);
+    };
+  }, [selectedCategory, selectedVendor, stockFilter, selectedPoE, selectedRack, selectedWifi, selectedPort, searchQuery]);
 
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
+    // Search
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
@@ -75,6 +166,7 @@ function CatalogueContent() {
       );
     }
 
+    // Category
     if (selectedCategory) {
       const catMap: Record<string, string> = {
         networking: "Networking",
@@ -87,10 +179,12 @@ function CatalogueContent() {
       result = result.filter((p) => p.category === catMap[selectedCategory]);
     }
 
+    // Vendor
     if (selectedVendor) {
       result = result.filter((p) => p.vendor === selectedVendor);
     }
 
+    // Stock
     if (stockFilter === "in-stock") {
       result = result.filter(
         (p) => p.stock === "in-stock" || p.stock === "low-stock"
@@ -101,6 +195,35 @@ function CatalogueContent() {
       );
     }
 
+    // PoE
+    if (selectedPoE.length > 0) {
+      result = result.filter((p) =>
+        selectedPoE.some((v) => v === "true" && p.techSpecs.poeSupport === true)
+      );
+    }
+
+    // Rack mountable
+    if (selectedRack.length > 0) {
+      result = result.filter((p) =>
+        selectedRack.some((v) => p.techSpecs.rackMountable === v)
+      );
+    }
+
+    // Wi-Fi standard
+    if (selectedWifi.length > 0) {
+      result = result.filter((p) =>
+        selectedWifi.some((v) => p.techSpecs.wifiStandard === v)
+      );
+    }
+
+    // Port count
+    if (selectedPort.length > 0) {
+      result = result.filter((p) =>
+        selectedPort.some((v) => p.techSpecs.portCount === parseInt(v, 10))
+      );
+    }
+
+    // Sort
     switch (sortBy) {
       case "name-asc":
         result.sort((a, b) => a.name.localeCompare(b.name));
@@ -125,7 +248,17 @@ function CatalogueContent() {
     }
 
     return result;
-  }, [searchQuery, selectedCategory, selectedVendor, stockFilter, sortBy]);
+  }, [
+    searchQuery,
+    selectedCategory,
+    selectedVendor,
+    stockFilter,
+    sortBy,
+    selectedPoE,
+    selectedRack,
+    selectedWifi,
+    selectedPort,
+  ]);
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -133,10 +266,32 @@ function CatalogueContent() {
     setSelectedVendor("");
     setStockFilter("");
     setSortBy("name-asc");
+    setSelectedPoE([]);
+    setSelectedRack([]);
+    setSelectedWifi([]);
+    setSelectedPort([]);
   };
 
-  const hasActiveFilters =
-    selectedCategory || selectedVendor || stockFilter || searchQuery;
+  const toggleArrayFilter = (
+    current: string[],
+    value: string,
+    setter: React.Dispatch<React.SetStateAction<string[]>>
+  ) => {
+    setter(current.includes(value) ? current.filter((v) => v !== value) : [...current, value]);
+  };
+
+  const activeFilterCount = [
+    selectedCategory,
+    selectedVendor,
+    stockFilter,
+    selectedPoE.length,
+    selectedRack.length,
+    selectedWifi.length,
+    selectedPort.length,
+  ].filter(Boolean).length;
+
+  // Use isLoading for initial load, isFiltering for filter-induced loading
+  const showSkeletons = isLoading || isFiltering;
 
   return (
     <div className="bg-background min-h-screen">
@@ -150,10 +305,10 @@ function CatalogueContent() {
                 Product Catalogue
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
-                {isLoading ? (
+                {showSkeletons ? (
                   <Skeleton className="h-4 w-48" />
                 ) : (
-                  `${filteredProducts.length} products found`
+                  `${filteredProducts.length} product${filteredProducts.length !== 1 ? "s" : ""} found`
                 )}
               </p>
             </div>
@@ -166,9 +321,9 @@ function CatalogueContent() {
               >
                 <Filter className="h-4 w-4" />
                 Filters
-                {(selectedCategory || selectedVendor || stockFilter) && (
+                {activeFilterCount > 0 && (
                   <span className="h-5 w-5 rounded-full bg-primary text-[10px] font-bold text-white flex items-center justify-center">
-                    {[selectedCategory, selectedVendor, stockFilter].filter(Boolean).length}
+                    {activeFilterCount}
                   </span>
                 )}
               </Button>
@@ -192,10 +347,11 @@ function CatalogueContent() {
         <div className="flex gap-6">
           {/* Sidebar Filters */}
           <aside
-            className={`w-full lg:w-64 shrink-0 space-y-6 ${
+            className={`w-full lg:w-72 shrink-0 space-y-6 ${
               isFilterOpen ? "block" : "hidden lg:block"
             }`}
           >
+            {/* Search */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Search</label>
               <div className="relative">
@@ -209,6 +365,7 @@ function CatalogueContent() {
               </div>
             </div>
 
+            {/* Categories */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Category</label>
               <div className="space-y-1">
@@ -242,6 +399,7 @@ function CatalogueContent() {
               </div>
             </div>
 
+            {/* Vendor */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Vendor</label>
               <select
@@ -259,23 +417,19 @@ function CatalogueContent() {
               </select>
             </div>
 
+            {/* Stock Status */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">
-                Stock Status
-              </label>
+              <label className="text-sm font-medium text-foreground">Stock Status</label>
               <div className="space-y-1">
                 {[
+                  { value: "", label: "All Stock Levels" },
                   { value: "in-stock", label: "In Stock" },
                   { value: "low-stock", label: "Low Stock" },
-                  { value: "out-of-stock", label: "Out of Stock" },
+                  { value: "out-of-stock", label: "Out of Stock / Digital" },
                 ].map((opt) => (
                   <button
                     key={opt.value}
-                    onClick={() =>
-                      setStockFilter(
-                        stockFilter === opt.value ? "" : opt.value
-                      )
-                    }
+                    onClick={() => setStockFilter(opt.value)}
                     className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
                       stockFilter === opt.value
                         ? "bg-primary/10 text-primary font-medium"
@@ -288,7 +442,121 @@ function CatalogueContent() {
               </div>
             </div>
 
-            {hasActiveFilters && (
+            {/* Divider */}
+            <div className="border-t border-border" />
+
+            {/* Technical Specs */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <Shield className="h-4 w-4 text-primary" />
+                <label className="text-sm font-semibold text-foreground">
+                  Technical Specs
+                </label>
+              </div>
+
+              {/* PoE */}
+              <div className="mb-4">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
+                  Power over Ethernet
+                </p>
+                <div className="space-y-1">
+                  {POE_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() =>
+                        toggleArrayFilter(selectedPoE, opt.value, setSelectedPoE)
+                      }
+                      className={`w-full flex items-center gap-2 text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                        selectedPoE.includes(opt.value)
+                          ? "bg-primary/10 text-primary font-medium"
+                          : "text-muted-foreground hover:bg-accent"
+                      }`}
+                    >
+                      <Zap className="h-3.5 w-3.5 shrink-0" />
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Rack Mountable */}
+              <div className="mb-4">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
+                  Rack Mountable
+                </p>
+                <div className="space-y-1">
+                  {RACK_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() =>
+                        toggleArrayFilter(selectedRack, opt.value, setSelectedRack)
+                      }
+                      className={`w-full flex items-center gap-2 text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                        selectedRack.includes(opt.value)
+                          ? "bg-primary/10 text-primary font-medium"
+                          : "text-muted-foreground hover:bg-accent"
+                      }`}
+                    >
+                      <HardDrive className="h-3.5 w-3.5 shrink-0" />
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Wi-Fi Standard */}
+              <div className="mb-4">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
+                  Wi-Fi Standard
+                </p>
+                <div className="space-y-1">
+                  {WIFI_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() =>
+                        toggleArrayFilter(selectedWifi, opt.value, setSelectedWifi)
+                      }
+                      className={`w-full flex items-center gap-2 text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                        selectedWifi.includes(opt.value)
+                          ? "bg-primary/10 text-primary font-medium"
+                          : "text-muted-foreground hover:bg-accent"
+                      }`}
+                    >
+                      <Wifi className="h-3.5 w-3.5 shrink-0" />
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Port Count */}
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
+                  Port Count
+                </p>
+                <div className="space-y-1">
+                  {PORT_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() =>
+                        toggleArrayFilter(selectedPort, opt.value, setSelectedPort)
+                      }
+                      className={`w-full flex items-center gap-2 text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                        selectedPort.includes(opt.value)
+                          ? "bg-primary/10 text-primary font-medium"
+                          : "text-muted-foreground hover:bg-accent"
+                      }`}
+                    >
+                      <Cpu className="h-3.5 w-3.5 shrink-0" />
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Clear all */}
+            {activeFilterCount > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -303,7 +571,7 @@ function CatalogueContent() {
 
           {/* Product Grid */}
           <main className="flex-1 min-w-0">
-            {isLoading ? (
+            {showSkeletons ? (
               <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <Card key={i} className="p-4">
@@ -323,7 +591,7 @@ function CatalogueContent() {
                 title="No products found"
                 description="Try adjusting your filters or search terms."
                 action={
-                  hasActiveFilters ? (
+                  activeFilterCount > 0 ? (
                     <Button variant="outline" onClick={clearFilters}>
                       Clear Filters
                     </Button>
@@ -374,10 +642,20 @@ function ProductCard({ product }: { product: Product }) {
           </div>
           <p className="text-xs text-muted-foreground">{product.vendor}</p>
         </div>
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-3 right-3 flex flex-col gap-1">
           <Badge variant={stockVariant} size="sm">
             {stockLabel}
           </Badge>
+          {product.techSpecs.poeSupport && (
+            <Badge variant="secondary" size="sm" className="text-[10px]">
+              PoE
+            </Badge>
+          )}
+          {product.techSpecs.rackMountable && (
+            <Badge variant="secondary" size="sm" className="text-[10px]">
+              {product.techSpecs.rackMountable}
+            </Badge>
+          )}
         </div>
       </div>
 
@@ -434,10 +712,27 @@ function ProductCard({ product }: { product: Product }) {
   );
 }
 
+function CatalogueErrorFallback() {
+  return (
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 text-center">
+      <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+      <h2 className="text-xl font-bold text-navy mb-2">
+        Failed to load catalogue
+      </h2>
+      <p className="text-sm text-muted-foreground mb-4">
+        There was an error loading the product listings. Please try again.
+      </p>
+      <Button onClick={() => window.location.reload()}>Reload Page</Button>
+    </div>
+  );
+}
+
 export default function CataloguePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-background" />}>
-      <CatalogueContent />
-    </Suspense>
+    <ErrorBoundary fallback={<CatalogueErrorFallback />}>
+      <Suspense fallback={<div className="min-h-screen bg-background" />}>
+        <CatalogueContent />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
