@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Totalonics — Enterprise B2B Portals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 1080px;
+  height: 1080px;
+  overflow: hidden;
+  background: #0B1120;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.flyer {
+  position: relative;
+  width: 1080px;
+  height: 1080px;
+  overflow: hidden;
+  background: #0B1120;
+  color: #FFFFFF;
+}
+
+/* ── Background Grid ── */
+.grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(56,189,248,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,189,248,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Glowing Orb ── */
+.orb {
+  position: absolute;
+  width: 680px;
+  height: 680px;
+  right: -120px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56,189,248,0.12) 0%, rgba(56,189,248,0.04) 40%, transparent 72%);
+  filter: blur(2px);
+  pointer-events: none;
+  z-index: 2;
+}
+.orb::before {
+  content: '';
+  position: absolute;
+  inset: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
+}
+.orb::after {
+  content: '';
+  position: absolute;
+  inset: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56,189,248,0.06) 0%, transparent 65%);
+}
+
+/* ── Subtle Circuit Lines ── */
+.circuit-lines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+.circuit-lines::before,
+.circuit-lines::after {
+  content: '';
+  position: absolute;
+  background: rgba(56,189,248,0.07);
+}
+.circuit-lines::before {
+  width: 220px;
+  height: 1px;
+  top: 200px;
+  right: 310px;
+}
+.circuit-lines::after {
+  width: 1px;
+  height: 120px;
+  top: 200px;
+  right: 490px;
+}
+
+/* ── Diagonal Accent Stripe ── */
+.accent-stripe {
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, rgba(56,189,248,0.06) 0%, transparent 60%);
+  transform: rotate(45deg);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── Content Wrapper ── */
+.content {
+  position: relative;
+  z-index: 10;
+  width: 1080px;
+  height: 1080px;
+  padding: 72px 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* ── Top Bar ── */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-name {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+}
+.brand-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #38BDF8;
+  box-shadow: 0 0 10px rgba(56,189,248,0.8), 0 0 24px rgba(56,189,248,0.4);
+  flex-shrink: 0;
+}
+
+.top-tag {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(56,189,248,0.7);
+  border: 1px solid rgba(56,189,248,0.25);
+  padding: 6px 16px;
+  border-radius: 100px;
+}
+
+/* ── Divider Line ── */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(56,189,248,0.4) 0%, rgba(56,189,248,0.08) 60%, transparent 100%);
+  margin: 8px 0;
+}
+
+/* ── Headline Section ── */
+.headline-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px 0;
+}
+
+.headline {
+  font-size: 76px;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: #FFFFFF;
+  margin-bottom: 24px;
+}
+.headline span {
+  background: linear-gradient(135deg, #FFFFFF 0%, #38BDF8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subhead {
+  font-size: 24px;
+  font-weight: 400;
+  color: rgba(148,163,184,0.9);
+  line-height: 1.55;
+  max-width: 580px;
+  letter-spacing: 0.01em;
+}
+
+/* ── Bullet Points ── */
+.bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 48px;
+}
+.bullet {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 24px;
+  background: rgba(56,189,248,0.05);
+  border: 1px solid rgba(56,189,248,0.12);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+.bullet:hover {
+  background: rgba(56,189,248,0.08);
+  border-color: rgba(56,189,248,0.25);
+}
+.check {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(56,189,248,0.15);
+  border: 1px solid rgba(56,189,248,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.check svg {
+  width: 14px;
+  height: 14px;
+  stroke: #38BDF8;
+  stroke-width: 3;
+  fill: none;
+}
+.bullet-text {
+  font-size: 20px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.92);
+  letter-spacing: 0.01em;
+}
+
+/* ── Bottom Section ── */
+.bottom-section {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  padding-top: 8px;
+}
+
+.tagline {
+  font-size: 14px;
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(100,116,139,0.9);
+  letter-spacing: 0.04em;
+  max-width: 380px;
+  line-height: 1.5;
+}
+
+/* ── CTA Box ── */
+.cta-box {
+  background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);
+  border-radius: 14px;
+  padding: 28px 40px;
+  text-align: center;
+  box-shadow:
+    0 0 32px rgba(56,189,248,0.3),
+    0 8px 32px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.15);
+}
+.cta-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 6px;
+}
+.cta-text {
+  font-size: 22px;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* ── Decorative Corner Marks ── */
+.corner-mark {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  z-index: 5;
+}
+.corner-mark.tl { top: 48px; left: 48px; border-top: 2px solid rgba(56,189,248,0.3); border-left: 2px solid rgba(56,189,248,0.3); }
+.corner-mark.tr { top: 48px; right: 48px; border-top: 2px solid rgba(56,189,248,0.3); border-right: 2px solid rgba(56,189,248,0.3); }
+.corner-mark.bl { bottom: 48px; left: 48px; border-bottom: 2px solid rgba(56,189,248,0.3); border-left: 2px solid rgba(56,189,248,0.3); }
+.corner-mark.br { bottom: 48px; right: 48px; border-bottom: 2px solid rgba(56,189,248,0.3); border-right: 2px solid rgba(56,189,248,0.3); }
+</style>
+</head>
+<body>
+<div class="flyer">
+  <!-- Background Elements -->
+  <div class="grid-bg"></div>
+  <div class="orb"></div>
+  <div class="accent-stripe"></div>
+  <div class="circuit-lines"></div>
+
+  <!-- Corner Marks -->
+  <div class="corner-mark tl"></div>
+  <div class="corner-mark tr"></div>
+  <div class="corner-mark bl"></div>
+  <div class="corner-mark br"></div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="brand">
+        <div class="brand-dot"></div>
+        <span class="brand-name">TOTALONICS</span>
+      </div>
+      <div class="top-tag">Enterprise Tech</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Headline -->
+    <div class="headline-section">
+      <h1 class="headline"><span>Enterprise-Grade<br>B2B Portals</span></h1>
+      <p class="subhead">Custom Architecture for IT Distributors, Logistics &amp; Procurement.</p>
+
+      <!-- Bullets -->
+      <div class="bullets">
+        <div class="bullet">
+          <div class="check">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <span class="bullet-text">Headless Frontend (Next.js / React)</span>
+        </div>
+        <div class="bullet">
+          <div class="check">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <span class="bullet-text">ERP &amp; Microsoft Dynamics Ready</span>
+        </div>
+        <div class="bullet">
+          <div class="check">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <span class="bullet-text">B2B Reseller &amp; RFQ Engines</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Bottom -->
+    <div class="bottom-section">
+      <p class="tagline">Agile Technical Studio. No Agency Bloat.</p>
+      <div class="cta-box">
+        <div class="cta-label">Get Started</div>
+        <div class="cta-text">DM for Private Consultation</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

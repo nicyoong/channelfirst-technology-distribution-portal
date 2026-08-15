@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Totalonics — Project Proposal for M-Link System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ── Print Reset & Page Setup ── */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+body {
+  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #1E293B;
+  background: #FFFFFF;
+  font-size: 11pt;
+  line-height: 1.6;
+}
+
+/* ── Page Container ── */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm 22mm;
+  page-break-after: always;
+  page-break-inside: avoid;
+  position: relative;
+  background: #FFFFFF;
+  overflow: hidden;
+}
+.page:last-child {
+  page-break-after: auto;
+}
+
+/* ── Cover Page ── */
+.cover-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 26mm;
+  padding-bottom: 26mm;
+  background: linear-gradient(175deg, #0F172A 0%, #1E3A8A 60%, #1E40AF 100%);
+  color: #FFFFFF;
+}
+
+.cover-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+.cover-page::after {
+  content: '';
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  right: -100px;
+  bottom: -100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cover-top {
+  position: relative;
+  z-index: 2;
+}
+
+.cover-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.cover-brand-name {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+}
+.cover-brand-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #38BDF8;
+  box-shadow: 0 0 10px rgba(56,189,248,0.9), 0 0 24px rgba(56,189,248,0.5);
+  flex-shrink: 0;
+}
+.cover-studio {
+  font-size: 9pt;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-left: 18px;
+}
+
+.cover-bottom {
+  position: relative;
+  z-index: 2;
+}
+
+.cover-divider {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #38BDF8, #0EA5E9);
+  border-radius: 2px;
+  margin-bottom: 28px;
+}
+
+.cover-title {
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.15;
+  color: #FFFFFF;
+  margin-bottom: 14px;
+}
+
+.cover-subtitle {
+  font-size: 15pt;
+  font-weight: 400;
+  color: rgba(255,255,255,0.82);
+  line-height: 1.5;
+  margin-bottom: 48px;
+  max-width: 480px;
+}
+
+.cover-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cover-meta-row {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+.cover-meta-label {
+  font-size: 8.5pt;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  min-width: 90px;
+}
+.cover-meta-value {
+  font-size: 11pt;
+  font-weight: 600;
+  color: #FFFFFF;
+  letter-spacing: 0.02em;
+}
+.cover-meta-value.accent {
+  color: #38BDF8;
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- PAGE 1: COVER -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="page cover-page">
+  <div class="cover-top">
+    <div class="cover-brand">
+      <div class="cover-brand-dot"></div>
+      <span class="cover-brand-name">TOTALONICS</span>
+      <span class="cover-studio">Agile Technical Studio</span>
+    </div>
+  </div>
+
+  <div class="cover-bottom">
+    <div class="cover-divider"></div>
+    <h1 class="cover-title">Project<br>Proposal</h1>
+    <p class="cover-subtitle">Enterprise B2B Portal &amp; Corporate Frontend Redesign</p>
+    <div class="cover-meta">
+      <div class="cover-meta-row">
+        <span class="cover-meta-label">Prepared For</span>
+        <span class="cover-meta-value">M-Link System (M) Sdn Bhd</span>
+      </div>
+      <div class="cover-meta-row">
+        <span class="cover-meta-label">Prepared By</span>
+        <span class="cover-meta-value accent">Totalonics — Agile Technical Studio</span>
+      </div>
+      <div class="cover-meta-row">
+        <span class="cover-meta-label">Date</span>
+        <span class="cover-meta-value">15 August 2026</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- PAGE 2: EXECUTIVE SUMMARY & THE VISION -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="page">
+  <!-- Page Header -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:32px;">
+    <div style="width:8px;height:8px;border-radius:50%;background:#1E3A8A;flex-shrink:0;"></div>
+    <span style="font-size:13px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:#1E3A8A;">Totalonics</span>
+    <span style="font-size:8pt;font-weight:400;color:#94A3B8;letter-spacing:0.1em;text-transform:uppercase;margin-left:4px;">Agile Technical Studio</span>
+    <div style="flex:1;height:1px;background:linear-gradient(90deg,#E2E8F0,transparent);margin-left:8px;"></div>
+    <span style="font-size:8pt;color:#94A3B8;letter-spacing:0.05em;">15 August 2026</span>
+  </div>
+
+  <!-- Section 1 -->
+  <div style="margin-bottom:36px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+      <div style="width:32px;height:3px;background:linear-gradient(90deg,#1E3A8A,#38BDF8);border-radius:2px;flex-shrink:0;"></div>
+      <h2 style="font-size:18pt;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#1E3A8A;">1. Executive Summary</h2>
+    </div>
+    <p style="font-size:11pt;color:#334155;line-height:1.85;text-align:justify;">
+      M-Link System (M) Sdn Bhd stands as one of Malaysia's premier IT distribution partners, 
+      serving a vast network of over 7,000 active resellers nationwide. Your digital storefront 
+      is the primary gateway through which thousands of business customers discover, evaluate, 
+      and procure technology products every day.
+    </p>
+    <p style="font-size:11pt;color:#334155;line-height:1.85;text-align:justify;margin-top:10px;">
+      This proposal outlines a rapid, low-risk frontend redesign of your existing 24/7 online shop 
+      — delivering a premium, corporate-grade UI/UX that reflects the scale and authority of 
+      M-Link's market position. The approach is deliberately non-disruptive: backend systems, 
+      ERP integrations, and live transaction pipelines remain untouched throughout the process.
+    </p>
+  </div>
+
+  <!-- Section 2 -->
+  <div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <div style="width:32px;height:3px;background:linear-gradient(90deg,#1E3A8A,#38BDF8);border-radius:2px;flex-shrink:0;"></div>
+      <h2 style="font-size:18pt;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#1E3A8A;">2. The Vision</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+      <!-- Card 1 -->
+      <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:22px 20px;">
+        <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#1E3A8A,#38BDF8);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        </div>
+        <h3 style="font-size:10.5pt;font-weight:700;color:#1E3A8A;letter-spacing:0.04em;margin-bottom:8px;">Premium Corporate Aesthetic</h3>
+        <p style="font-size:9.5pt;color:#475569;line-height:1.65;">A refined visual identity that communicates trust, scale, and technological sophistication to enterprise buyers.</p>
+      </div>
+      <!-- Card 2 -->
+      <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:22px 20px;">
+        <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#1E3A8A,#38BDF8);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <h3 style="font-size:10.5pt;font-weight:700;color:#1E3A8A;letter-spacing:0.04em;margin-bottom:8px;">Seamless Reseller Journey</h3>
+        <p style="font-size:9.5pt;color:#475569;line-height:1.65;">Streamlined navigation, faster product discovery, and an intuitive checkout flow designed for high-volume B2B buyers.</p>
+      </div>
+      <!-- Card 3 -->
+      <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:22px 20px;">
+        <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#1E3A8A,#38BDF8);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+        </div>
+        <h3 style="font-size:10.5pt;font-weight:700;color:#1E3A8A;letter-spacing:0.04em;margin-bottom:8px;">Zero Downtime Deployment</h3>
+        <p style="font-size:9.5pt;color:#475569;line-height:1.65;">Your 24/7 shop stays live throughout. We build on isolated staging environments with a phased, risk-free cutover.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- PAGE 3: TECHNICAL SCOPE & METHODOLOGY -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="page">
+  <!-- Page Header -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:32px;">
+    <div style="width:8px;height:8px;border-radius:50%;background:#1E3A8A;flex-shrink:0;"></div>
+    <span style="font-size:13px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:#1E3A8A;">Totalonics</span>
+    <span style="font-size:8pt;font-weight:400;color:#94A3B8;letter-spacing:0.1em;text-transform:uppercase;margin-left:4px;">Agile Technical Studio</span>
+    <div style="flex:1;height:1px;background:linear-gradient(90deg,#E2E8F0,transparent);margin-left:8px;"></div>
+    <span style="font-size:8pt;color:#94A3B8;letter-spacing:0.05em;">15 August 2026</span>
+  </div>
+
+  <!-- Section 3 -->
+  <div style="margin-bottom:36px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <div style="width:32px;height:3px;background:linear-gradient(90deg,#1E3A8A,#38BDF8);border-radius:2px;flex-shrink:0;"></div>
+      <h2 style="font-size:18pt;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#1E3A8A;">3. Scope of Work — Phase 1</h2>
+    </div>
+
+    <!-- 3.1 -->
+    <div style="display:flex;gap:16px;margin-bottom:18px;">
+      <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#1E3A8A,#38BDF8);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span style="font-size:13pt;font-weight:800;color:#FFFFFF;">3.1</span>
+      </div>
+      <div>
+        <h3 style="font-size:11.5pt;font-weight:700;color:#1E293B;margin-bottom:6px;">UI/UX Design</h3>
+        <p style="font-size:10.5pt;color:#475569;line-height:1.75;">
+          High-fidelity Figma prototyping covering the complete customer journey — 
+          Homepage, Catalog Listing, Product Detail Pages, and Reseller Registration flows. 
+          Every screen is designed for clarity, speed, and enterprise-grade trust signals.
+        </p>
+      </div>
+    </div>
+
+    <!-- 3.2 -->
+    <div style="display:flex;gap:16px;margin-bottom:18px;">
+      <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#1E3A8A,#38BDF8);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span style="font-size:13pt;font-weight:800;color:#FFFFFF;">3.2</span>
+      </div>
+      <div>
+        <h3 style="font-size:11.5pt;font-weight:700;color:#1E293B;margin-bottom:6px;">Custom Frontend Development</h3>
+        <p style="font-size:10.5pt;color:#475569;line-height:1.75;">
+          Building a responsive, high-performance enterprise interface using modern 
+          Headless architecture (Next.js / React) that connects safely to the existing 
+          backend. No monolithic redesign — a layered, API-first approach that keeps 
+          your current systems intact.
+        </p>
+      </div>
+    </div>
+
+    <!-- 3.3 -->
+    <div style="display:flex;gap:16px;">
+      <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#1E3A8A,#38BDF8);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span style="font-size:13pt;font-weight:800;color:#FFFFFF;">3.3</span>
+      </div>
+      <div>
+        <h3 style="font-size:11.5pt;font-weight:700;color:#1E293B;margin-bottom:6px;">System Integration Discovery</h3>
+        <p style="font-size:10.5pt;color:#475569;line-height:1.75;">
+          A mandatory technical audit to verify how the current online shop communicates 
+          with Microsoft Dynamics and downstream ERP systems. This discovery phase 
+          identifies data flow paths, sync mechanisms, and potential conflict points — 
+          ensuring zero data loss and no ERP disruption during the frontend transition.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4 -->
+  <div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+      <div style="width:32px;height:3px;background:linear-gradient(90deg,#1E3A8A,#38BDF8);border-radius:2px;flex-shrink:0;"></div>
+      <h2 style="font-size:18pt;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#1E3A8A;">4. Development Standards</h2>
+    </div>
+    <div style="background:#F8FAFC;border-left:4px solid #1E3A8A;border-radius:0 10px 10px 0;padding:20px 24px;">
+      <p style="font-size:10.5pt;color:#334155;line-height:1.85;text-align:justify;">
+        All development is conducted on isolated Git branches within dedicated staging environments 
+        that mirror production. No code reaches the live shop without passing through a structured 
+        review pipeline. Production deployment occurs only after rigorous User Acceptance Testing 
+        (UAT) and explicit written approval from the M-Link technical team. Every commit is 
+        version-tracked, every change is reversible, and every milestone is sign-off gated.
+      </p>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:16px;">
+      <div style="display:flex;align-items:center;gap:7px;padding:8px 14px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:8px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span style="font-size:9pt;font-weight:600;color:#1E3A8A;">Git Branch Isolation</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;padding:8px 14px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:8px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span style="font-size:9pt;font-weight:600;color:#1E3A8A;">Staging Environment</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;padding:8px 14px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:8px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span style="font-size:9pt;font-weight:600;color:#1E3A8A;">UAT Sign-Off Required</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;padding:8px 14px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:8px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span style="font-size:9pt;font-weight:600;color:#1E3A8A;">Zero-Downtime Cutover</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- PAGE 4: INVESTMENT & TIMELINE -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="page">
+  <!-- Page Header -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:32px;">
+    <div style="width:8px;height:8px;border-radius:50%;background:#1E3A8A;flex-shrink:0;"></div>
+    <span style="font-size:13px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:#1E3A8A;">Totalonics</span>
+    <span style="font-size:8pt;font-weight:400;color:#94A3B8;letter-spacing:0.1em;text-transform:uppercase;margin-left:4px;">Agile Technical Studio</span>
+    <div style="flex:1;height:1px;background:linear-gradient(90deg,#E2E8F0,transparent);margin-left:8px;"></div>
+    <span style="font-size:8pt;color:#94A3B8;letter-spacing:0.05em;">15 August 2026</span>
+  </div>
+
+  <!-- Section 5 -->
+  <div style="margin-bottom:36px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <div style="width:32px;height:3px;background:linear-gradient(90deg,#1E3A8A,#38BDF8);border-radius:2px;flex-shrink:0;"></div>
+      <h2 style="font-size:18pt;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#1E3A8A;">5. Estimated Investment</h2>
+    </div>
+
+    <!-- Investment Table -->
+    <table style="width:100%;border-collapse:collapse;margin-bottom:8px;">
+      <thead>
+        <tr>
+          <th style="text-align:left;padding:12px 16px;font-size:9pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#FFFFFF;background:#1E3A8A;border-radius:8px 0 0 0;">Phase</th>
+          <th style="text-align:left;padding:12px 16px;font-size:9pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#FFFFFF;background:#1E3A8A;">Deliverable</th>
+          <th style="text-align:right;padding:12px 16px;font-size:9pt;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#FFFFFF;background:#1E3A8A;border-radius:0 8px 0 0;">Investment (RM)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#F8FAFC;">
+          <td style="padding:14px 16px;font-size:10pt;font-weight:700;color:#1E3A8A;border-bottom:1px solid #E2E8F0;">Phase 1</td>
+          <td style="padding:14px 16px;font-size:10pt;color:#475569;border-bottom:1px solid #E2E8F0;">UI/UX Design &amp; System Discovery</td>
+          <td style="padding:14px 16px;font-size:11pt;font-weight:700;color:#1E293B;text-align:right;border-bottom:1px solid #E2E8F0;">5,500</td>
+        </tr>
+        <tr>
+          <td style="padding:14px 16px;font-size:10pt;font-weight:700;color:#1E3A8A;border-bottom:1px solid #E2E8F0;">Phase 2</td>
+          <td style="padding:14px 16px;font-size:10pt;color:#475569;border-bottom:1px solid #E2E8F0;">Custom Frontend Development</td>
+          <td style="padding:14px 16px;font-size:11pt;font-weight:700;color:#1E293B;text-align:right;border-bottom:1px solid #E2E8F0;">10,000</td>
+        </tr>
+        <tr style="background:#F8FAFC;">
+          <td style="padding:14px 16px;font-size:10pt;font-weight:700;color:#1E3A8A;border-bottom:1px solid #E2E8F0;">Phase 3</td>
+          <td style="padding:14px 16px;font-size:10pt;color:#475569;border-bottom:1px solid #E2E8F0;">UAT, Testing &amp; Handover</td>
+          <td style="padding:14px 16px;font-size:11pt;font-weight:700;color:#1E293B;text-align:right;border-bottom:1px solid #E2E8F0;">3,000</td>
+        </tr>
+        <tr style="background:linear-gradient(90deg,#EEF2FF,#F0F9FF);">
+          <td style="padding:16px 16px;font-size:10pt;font-weight:800;color:#1E3A8A;border-radius:0 0 0 8px;">Total</td>
+          <td style="padding:16px 16px;font-size:10pt;font-weight:600;color:#1E3A8A;border-radius:0 0 0 0;">Estimated Investment</td>
+          <td style="padding:16px 16px;font-size:14pt;font-weight:900;color:#1E3A8A;text-align:right;border-radius:0 0 8px 0;">18,500</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:8.5pt;color:#94A3B8;margin-top:8px;letter-spacing:0.03em;">
+      * Final investment may be adjusted following the Phase 1 System Integration Discovery audit.
+    </p>
+  </div>
+
+  <!-- Section 6 -->
+  <div style="margin-bottom:40px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+      <div style="width:32px;height:3px;background:linear-gradient(90deg,#1E3A8A,#38BDF8);border-radius:2px;flex-shrink:0;"></div>
+      <h2 style="font-size:18pt;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#1E3A8A;">6. Timeline</h2>
+    </div>
+    <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:22px 26px;">
+      <p style="font-size:11pt;color:#334155;line-height:1.85;">
+        Estimated <strong style="color:#1E3A8A;">4 to 6 weeks</strong> for Phase 1 delivery, 
+        depending on the findings of the Microsoft Dynamics integration discovery. Phase 2 
+        development commences immediately upon Phase 1 sign-off, with an anticipated full 
+        completion window of <strong style="color:#1E3A8A;">8 to 12 weeks</strong> from project kickoff.
+      </p>
+    </div>
+
+    <!-- Timeline Visual -->
+    <div style="display:flex;gap:0;margin-top:20px;border-radius:10px;overflow:hidden;border:1px solid #E2E8F0;">
+      <div style="flex:1;background:#1E3A8A;padding:16px 14px;text-align:center;">
+        <div style="font-size:8pt;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:4px;">Weeks 1–2</div>
+        <div style="font-size:10pt;font-weight:700;color:#FFFFFF;">Discovery &amp; Design</div>
+      </div>
+      <div style="width:2px;background:#E2E8F0;flex-shrink:0;"></div>
+      <div style="flex:1;background:#38BDF8;padding:16px 14px;text-align:center;">
+        <div style="font-size:8pt;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:4px;">Weeks 2–4</div>
+        <div style="font-size:10pt;font-weight:700;color:#FFFFFF;">Development</div>
+      </div>
+      <div style="width:2px;background:#E2E8F0;flex-shrink:0;"></div>
+      <div style="flex:1;background:#0EA5E9;padding:16px 14px;text-align:center;">
+        <div style="font-size:8pt;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:4px;">Weeks 4–6</div>
+        <div style="font-size:10pt;font-weight:700;color:#FFFFFF;">Testing &amp; UAT</div>
+      </div>
+      <div style="width:2px;background:#E2E8F0;flex-shrink:0;"></div>
+      <div style="flex:1;background:#F8FAFC;border-radius:0;padding:16px 14px;text-align:center;">
+        <div style="font-size:8pt;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px;">Week 6+</div>
+        <div style="font-size:10pt;font-weight:700;color:#1E3A8A;">Deployment</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="position:absolute;bottom:20mm;left:22mm;right:22mm;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid #E2E8F0;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:6px;height:6px;border-radius:50%;background:#1E3A8A;"></div>
+        <span style="font-size:9pt;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#1E3A8A;">Totalonics</span>
+      </div>
+      <span style="font-size:8.5pt;color:#94A3B8;letter-spacing:0.08em;">Enterprise Solutions · Agile Delivery</span>
+      <span style="font-size:8.5pt;color:#CBD5E1;">Page 4 of 4</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
